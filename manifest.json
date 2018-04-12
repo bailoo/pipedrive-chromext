@@ -1,0 +1,14 @@
+{
+	"name": "PipeDrive ChromeEXT",
+	"description": "PipeDrive ChromeEXT",
+	"version": "0.1",
+	"permissions": 
+	[
+		"activeTab"
+	],
+	"browser_action": {
+      "default_popup": "index.html"
+  	},
+	"manifest_version": 2,
+	"author":"Turbatu Dumitru Titus <titus.tur.dum@gmail.com>"
+}

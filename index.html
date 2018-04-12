@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+	<title>PipeDrive ChromeEXT</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+
+	<link rel="stylesheet" type="text/css" href="libs/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="libs/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="main.css">
+
+	<script type="text/javascript" src="libs/js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="libs/js/angular.min.js"></script>
+	<script type="text/javascript" src="libs/js/ui-bootstrap-tpls-2.5.0.min.js"></script>
+	<script type="text/javascript" src="Utils.js"></script>
+	<script type="text/javascript" src="logic.js"></script>
+</head>
+<body ng-controller="mainController">
+	<div ng-if="AIRTABLE_TOKEN && PIPEDRIVE_TOKEN">
+		{{PIPEDRIVE_TOKEN}}
+		{{AIRTABLE_TOKEN}}
+	</div>
+	<div ng-if="!(AIRTABLE_TOKEN && PIPEDRIVE_TOKEN)">
+		Tokens are not set, <a href ng-click="showTokensModal()">Set Tokens</a>
+	</div>
+	<script type="text/ng-template" id="tokensModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">Set Tokens</h3>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <div class="input-group" ng-class="{'has-error': local.pipedriveTokenHasError}">
+			  <span class="input-group-addon" id="addon1">Pipedrive Token</span>
+			  <input type="text" class="form-control" ng-focus="local.pipedriveTokenHasError = false" ng-model="local.pipedriveToken" aria-describedby="addon1">
+			</div>
+			<br />
+			<div class="input-group" ng-class="{'has-error': local.airtableTokenHasError}">
+			  <span class="input-group-addon" id="addon2">Airtable Token</span>
+			  <input type="text" class="form-control" ng-focus="local.airtableTokenHasError = false" ng-model="local.airtableToken" aria-describedby="addon2">
+			</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="local.save()">Save</button>
+        </div>
+    </script>
+</body>
+</html>
