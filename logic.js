@@ -184,26 +184,20 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				if($scope.PIPEDRIVE_TOKEN && $scope.AIRTABLE_TOKEN){
 					//$scope.loadDeal();
 					Utils.getDealId(dealId => {
-						if(dealId){
-							Utils.getState(state => {
-								$timeout(() => {
-									if(state){
-										if(state.search){
-											$scope.search = state.search;
-										}
-										if(state.sort){
-											$scope.sort = state.sort;
-										}
-										$scope.dealId = dealId;
-									}
-									$scope.loadArtists(state);
-								});
-							});
-						}else{
+						Utils.getState(state => {
 							$timeout(() => {
-								
+								if(state){
+									if(state.search){
+										$scope.search = state.search;
+									}
+									if(state.sort){
+										$scope.sort = state.sort;
+									}
+									$scope.dealId = dealId;
+								}
+								$scope.loadArtists(state);
 							});
-						}
+						});
 					});
 				}else{
 					$scope.showTokensModal();
