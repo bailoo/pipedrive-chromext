@@ -120,6 +120,9 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				$scope.artistsToShow = $scope.artists.slice(start, end);
 				$scope.pagination.totalItems = $scope.artists.length;
 				$scope.pagination.loading = false;
+				if(!state){
+					$scope.saveState();
+				}
 			});
 		}, function done(error) {
 			$timeout(() => {
