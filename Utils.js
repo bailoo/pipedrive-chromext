@@ -15,6 +15,10 @@ class Utils{
 		return "AIRTABLE_TEMP_TOKEN";
 	}
 
+	static get STATE_KEY(){
+		return "STATE";
+	}
+
 	static getPipedriveToken(callback){
 		Utils.getValue(Utils.PIPEDRIVE_TOKEN_KEY, callback);
 	}
@@ -29,6 +33,10 @@ class Utils{
 
 	static getTempAirtableToken(callback){
 		Utils.getValue(Utils.AIRTABLE_TEMP_TOKEN_KEY, callback);
+	}
+
+	static getState(callback){
+		Utils.getValue(Utils.STATE_KEY, callback);
 	}
 
 	static setPipedriveToken(token){
@@ -47,11 +55,15 @@ class Utils{
 		Utils.setValue(Utils.AIRTABLE_TEMP_TOKEN_KEY, token);
 	}
 
+	static setState(state){
+		Utils.setValue(Utils.STATE_KEY, state);
+	}
+
 	static setValue(key, value){
 		if(window.chrome && window.chrome.storage && window.chrome.storage.sync && window.chrome.storage.sync.set){
 			window.chrome.storage.sync.set({[key]: value});
 		}else if(window.localStorage){
-			window.localStorage[key] = value;
+			window.localStorage[key] = typeof(value) === "object" ? JSON.stringify(value) : value;
 		}
 	}
 
@@ -61,7 +73,25 @@ class Utils{
 				callback(values && values[key]);
 			});
 		}else if(window.localStorage){
-			callback(window.localStorage[key]);
+			if(key === Utils.STATE_KEY){
+				callback(JSON.parse(window.localStorage[key]));
+			}else{
+				callback(window.localStorage[key]);
+			}
+		}else{
+			callback();
+		}
+	}
+
+	static getDealId(callback){
+		if(window.chrome && window.chrome.tabs){
+			chrome.tabs.query({'active': true}, tabs => {
+				if(tabs && tabs.length && tabs[0].url && /starclinch\.pipedrive\.com\/deal\/\d+/.test(tabs[0].url)){
+					callback(tabs[0].url.match(/deal\/(\d+)/)[1]);
+				}else{
+					callback();
+				}
+			});
 		}else{
 			callback();
 		}

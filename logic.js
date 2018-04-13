@@ -1,6 +1,7 @@
 const Airtable = require('airtable');
 const app = angular.module("myApp", ["ui.bootstrap"]);
-app.controller("mainController", ["$scope", "$http", "$uibModal", function($scope, $http, $uibModal){
+
+app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", function($scope, $http, $uibModal, $timeout){
 	window.exposedScope = $scope;
 	$scope.sort = "asc";
 	$scope.categories = [{value: 0, name:"CATEGORY"}, {value: 1, name:"ANCHOR/EMCEE"},{value: 2, name:"CELEBRITY"}, {value: 3, name:"COMEDIAN"}, {value:4, name:"DANCER/TROUPE"}, {value:5, name:"DJ"}, {value:6, name:"INSTRUMENTALIST"}, {value:7, name:"LIVE BAND"}, {value:8, name:"MAGICIAN"}, {value:9, name:"MAKE-UP ARTIST"}, {value:10, name:"MODEL"}, {value:11, name:"PHOTOGRAPHER"}, {value:12, name:"SINGER"}, {value:13, name:"SPEAKER"}, {value:14, name:"VARIETY ARTIST"}];
@@ -53,9 +54,10 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", function($scop
 
 	$scope.pagination.onPageChange = () => {
 		$scope.artistsToShow = $scope.artists.slice(($scope.pagination.currentPage - 1) * $scope.pagination.itemsPerPage, Math.min($scope.pagination.currentPage * $scope.pagination.itemsPerPage, $scope.artists.length));
+		$scope.saveState();
 	}
 
-	$scope.loadArtists = () => {
+	$scope.loadArtists = state => {
 		$scope.pagination.loading = true;
 		$scope.alerts = $scope.alerts.filter(a => a.type !== "ARTISTS");
 		$scope.artists = [];
@@ -66,7 +68,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", function($scop
 
 		let options = {
 						view: "TestView",
-		    			fields: ["id", "professionalname", "price", "city", "email", "phone", "subcategory"],
+		    			fields: ["id", "professionalname", "price", "city", "email", "phone", "subcategory", "url"],
 		    			sort: [{field: 'price', direction: $scope.sort}]
 		    		}
 
@@ -91,38 +93,47 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", function($scop
 			}
 		}
 		options.filterByFormula = filterByFormula;
-		console.log("filter", options.filterByFormula);
 		$scope.airtable("ArtistsDev")
 		.select(options)
 		.eachPage(function(records, fetchNextPage) {
-			console.log("artists", records);
-			$scope.loadMoreArtists = fetchNextPage;
-			$scope.artists.push(...records.map(v => ({...v.fields, rowId: v.fields.id, id: v.id})));
-			$scope.artistsToShow = $scope.artists.slice(0, $scope.pagination.itemsPerPage);
-			$scope.pagination.totalItems = $scope.artists.length;
-			$scope.pagination.loading = false;
-			try{
-				$scope.$apply();
-			}catch(e){
-				console.warn(e);
-			}
+			$timeout(() => {
+				$scope.loadMoreArtists = fetchNextPage;
+				$scope.artists.push(...records.map(v => {
+					let artist = {...v.fields, rowId: v.fields.id, id: v.id};
+					if(state && state.artists){
+						artist.checked = (state.artists.find(a => a.id === artist.id) || {}).checked;
+					}
+					return artist;
+				}));
+
+				let start = 0;
+				let end = $scope.itemsPerPage;
+				if(state && state.currentPage && ((state.currentPage - 1) * $scope.pagination.itemsPerPage) < $scope.artists.length){
+					$scope.pagination.currentPage = state.currentPage;
+					start = (state.currentPage - 1) * $scope.pagination.itemsPerPage;
+					end = Math.min($scope.artists.length, state.currentPage * $scope.pagination.itemsPerPage);
+				}
+				if(state && state.artists && $scope.artists.length < state.artists.length && $scope.loadMoreArtists){
+					$scope.loadMoreArtists();
+				}
+
+				$scope.artistsToShow = $scope.artists.slice(start, end);
+				$scope.pagination.totalItems = $scope.artists.length;
+				$scope.pagination.loading = false;
+			});
 		}, function done(error) {
-			console.log("@loadArtists.done", error);
-			$scope.loadMoreArtists = undefined;
-			if(error){
-				$scope.alerts.push({type: "ARTISTS", msg: "Unable to load artists. Make sure the AirTable token is valid."});
-			}
-			$scope.pagination.loading = false;
-			try{
-				$scope.$apply();
-			}catch(e){
-				console.warn(e);
-			}
+			$timeout(() => {
+				$scope.loadMoreArtists = undefined;
+				if(error){
+					$scope.alerts.push({type: "ARTISTS", msg: "Unable to load artists. Make sure the AirTable token is valid."});
+				}
+				$scope.pagination.loading = false;
+			});
 		});
 	}
 
 
-	$scope.loadDeal = () => {
+	$scope.loadDeal = dealId => {
 		let loadDeal = () => {
 			if($scope.dealId){
 				$scope.pagination.loading = true;
@@ -141,42 +152,82 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", function($scop
 				$scope.loadArtists();
 			}
 		}
-		if(window.chrome && window.chrome.tabs){
-			chrome.tabs.query({'active': true}, tabs => {
-				if(tabs && tabs.length && tabs[0].url && /starclinch\.pipedrive\.com\/deal\/\d+/.test(tabs[0].url)){
-					$scope.$apply(() => {
-						$scope.dealId = tabs[0].url.match(/deal\/(\d+)/)[1];
-						loadDeal();
-					});
-				}else{
-					loadDeal();
-				}
-			});
-		}else{
+		
+		if(dealId){
+			$scope.dealId = dealId;
 			loadDeal();
+		}else{
+			Utils.getDealId(dealId => {
+				$timeout(() => {
+					$scope.dealId = dealId;
+					loadDeal();
+				});
+			});
 		}
 	}
 
 	Utils.getPipedriveToken(token => {
-		$scope.PIPEDRIVE_TOKEN = token;
+		$timeout(() => {
+			$scope.PIPEDRIVE_TOKEN = token;
+		});
 		Utils.getAirtableToken(token => {
-			$scope.AIRTABLE_TOKEN = token;
+			$timeout(() => {
+				$scope.AIRTABLE_TOKEN = token;
 
-			if($scope.AIRTABLE_TOKEN){
-				$scope.airtable = new Airtable({apiKey: $scope.AIRTABLE_TOKEN}).base("appAOUimmyFijLDUZ");
-			}
+				if($scope.AIRTABLE_TOKEN){
+					$scope.airtable = new Airtable({apiKey: $scope.AIRTABLE_TOKEN}).base("appAOUimmyFijLDUZ");
+				}
 
-			if($scope.PIPEDRIVE_TOKEN && $scope.AIRTABLE_TOKEN){
-				$scope.loadDeal();				
-			}else{
-				$scope.showTokensModal();
-			}
+				if($scope.PIPEDRIVE_TOKEN && $scope.AIRTABLE_TOKEN){
+					//$scope.loadDeal();
+					Utils.getDealId(dealId => {
+						if(dealId){
+							$timeout(() => {
+								$scope.loadDeal(dealId);
+							});
+						}else{
+							$timeout(() => {
+								Utils.getState(state => {
+									if(state && state.search){
+										$scope.search = state.search;
+									}
+									if(state && state.sort){
+										$scope.sort = state.sort;
+									}
+									$scope.loadArtists(state);
+								});
+							});
+						}
+					});
+				}else{
+					$scope.showTokensModal();
+				}
+			});
 		});
 	});
 
 	$scope.submitArtists = () => {
-		let emails = $scope.artists.filter(a => a.checked).map(a => a.email);
-		console.log(emails);
+		let artists = $scope.artists.filter(a => a.checked).map(a => ({id: a.rowId, email: a.email}));
+		let categoryName = ($scope.categories.find(c => c.value == $scope.search.category) || {}).name
+		let json = {
+			dealId: $scope.dealId,
+			categoryId: $scope.search.category,
+			categoryName,
+			artists,
+		}
+		console.log(json);
+	}
+
+	$scope.restoreState = () => {
+		Utils.getState(state => {
+
+		});
+	}
+
+	$scope.saveState = () => {
+		let state = {artists: $scope.artists.map(a => ({id: a.id, checked: a.checked})), currentPage: $scope.pagination.currentPage, search: $scope.search, sort: $scope.sort};
+		console.log("@saveState", state);
+		Utils.setState(state);
 	}
 
 }]);
