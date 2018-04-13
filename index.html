@@ -19,6 +19,9 @@
 <body ng-controller="mainController">
 	<div uib-alert ng-repeat="alert in alerts" class="alert-danger text-center" close="closeAlert($index)">{{alert.msg}}</div>
 	<div id="mainWrapper" ng-if="AIRTABLE_TOKEN && PIPEDRIVE_TOKEN">
+		<div ng-if="dealId" id="processDealBtnWrapper" class="text-center">
+			<button ng-click="loadDeal(dealId)" class="btn btn-sm btn-danger">Process Deal {{dealId}}</button>
+		</div>
 		<div id="searchBar" class="text-center">
 			<select ng-model="search.category">
       			<option ng-repeat="option in categories" ng-value="option.value">{{option.name}}</option>

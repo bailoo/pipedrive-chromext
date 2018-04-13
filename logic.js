@@ -185,20 +185,23 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					//$scope.loadDeal();
 					Utils.getDealId(dealId => {
 						if(dealId){
-							$timeout(() => {
-								$scope.loadDeal(dealId);
-							});
-						}else{
-							$timeout(() => {
-								Utils.getState(state => {
-									if(state && state.search){
-										$scope.search = state.search;
-									}
-									if(state && state.sort){
-										$scope.sort = state.sort;
+							Utils.getState(state => {
+								$timeout(() => {
+									if(state){
+										if(state.search){
+											$scope.search = state.search;
+										}
+										if(state.sort){
+											$scope.sort = state.sort;
+										}
+										$scope.dealId = dealId;
 									}
 									$scope.loadArtists(state);
 								});
+							});
+						}else{
+							$timeout(() => {
+								
 							});
 						}
 					});
