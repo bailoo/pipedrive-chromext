@@ -1,6 +1,110 @@
 html, body {
   margin: 0;
   padding: 0;
-  max-width: 400px;
-  min-width: 400px;
+  max-width: 450px;
+  min-width: 450px;
+  min-height: 620px;
+  font-size: 11px;
+  overflow: hidden;
+}
+
+#tokensNotSet{
+	padding-top: 50px;
+}
+
+#searchBar{
+	padding-top: 10px;
+}
+
+#searchBar input{
+	display: inline-block;
+	width: 95px;
+}
+
+#searchBar select{
+	height: 35px;
+}
+
+.icon{
+	margin-right: 8px;
+}
+
+.rightIcon{
+	margin-left: 4px;
+}
+
+#searchBar button{
+	position: relative;
+	top: -1px;
+}
+
+#sortBtnWrapper{
+	padding-top: 12px;
+	padding-right: 20%;
+}
+
+.sortBtn span{
+	font-size: 120%;
+	font-weight: bolder;
+}
+
+.sortBtn{
+	user-select: none;
+	cursor: pointer;
+}
+
+#artistsWrapper{
+	padding: 10px;
+}
+
+.subcategory{
+	padding-top: 8px;
+}
+
+.contactInfo{
+	font-weight: 500;
+}
+
+.artistInfo, .artistPrice, .artistCheckbox {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.artistInfo{
+	width: 260px;
+}
+.artistPrice {
+	text-align: center;
+	width: 85px;
+	font-size: 120%;
+	font-weight: 500;
+}
+
+.artistCheckbox{
+	text-align: center;
+	width: 40px;
+}
+
+
+
+.submitBtnWrapper{
+	padding-top: 25px;
+	padding-bottom: 15px;
+}
+
+#artistsWrapper{
+	max-height: 370px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.artistElm{
+	padding-bottom: 15px;
+}
+
+
+#changeTokensBtnWrapper{
+	position: absolute;
+	bottom: 0;
+	right: 0;
 }

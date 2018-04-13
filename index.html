@@ -6,20 +6,77 @@
 
 	<link rel="stylesheet" type="text/css" href="libs/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="libs/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="checkboxes.css">
 	<link rel="stylesheet" type="text/css" href="main.css">
 
 	<script type="text/javascript" src="libs/js/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="libs/js/angular.min.js"></script>
 	<script type="text/javascript" src="libs/js/ui-bootstrap-tpls-2.5.0.min.js"></script>
+	<script type="text/javascript" src="libs/js/airtable.browser.js"></script>
 	<script type="text/javascript" src="Utils.js"></script>
 	<script type="text/javascript" src="logic.js"></script>
 </head>
 <body ng-controller="mainController">
-	<div ng-if="AIRTABLE_TOKEN && PIPEDRIVE_TOKEN">
-		{{PIPEDRIVE_TOKEN}}
-		{{AIRTABLE_TOKEN}}
+	<div uib-alert ng-repeat="alert in alerts" class="alert-danger text-center" close="closeAlert($index)">{{alert.msg}}</div>
+	<div id="mainWrapper" ng-if="AIRTABLE_TOKEN && PIPEDRIVE_TOKEN">
+		<div id="searchBar" class="text-center">
+			<select ng-model="search.category">
+      			<option ng-repeat="option in categories" ng-value="option.value">{{option.name}}</option>
+      		</select>
+      		<input type="number" class="form-control" ng-model="search.price" placeholder="Price" title="Price" />
+      		<input type="text" class="form-control" ng-model="search.city" placeholder="City" title="City"/>
+      		<button ng-click="loadArtists()" class="btn btn-info"><i class="icon glyphicon glyphicon-search"></i>Search</button>
+      	</div>
+      	<div id="sortBtnWrapper" class="text-right">
+      		<div class="sortBtn" ng-click="changeSort()">
+      			<span>Sort</span>
+      			<i class="rightIcon glyphicon glyphicon-arrow-up" ng-if="sort === 'asc'"></i>
+      			<i class="rightIcon glyphicon glyphicon-arrow-down" ng-if="sort === 'desc'"></i>
+      		</div>
+      	</div>
+      	<div id="artistsWrapper">
+      		<h3 ng-if="pagination.totalItems === 0 && !pagination.loading" class="text-center">No artists for searched criteria</h3>
+      		<div class="artistElm" ng-repeat="artist in artistsToShow">
+      			<div class="artistInfo">
+	      			<h4>{{artist.professionalname}}</h4>
+	      			<div class="contactInfo">
+	      				<span class="email">{{artist.email}}</span>
+	      				<span class="phoneNumber">{{artist.phone}}</span>
+	      			</div>
+	      			<div class="subcategory">{{artist.subcategory}}</div>
+      			</div><!-- 
+      			 --><div class="artistPrice">Rs {{artist.price}}</div><!-- 
+      			 --><div class="artistCheckbox">
+      			 		<div class="checkbox bigCheckbox">
+				          <label>
+				            <input type="checkbox" value="" ng-model="artist.checked">
+				            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+				          </label>
+				        </div>
+      			 </div>
+      		</div>
+      	</div>
+
+      	<div ng-if="pagination.totalItems > 10" id="paginationWrapper" class="text-center">
+			<ul uib-pagination boundary-links="true" max-size="4" force-ellipses="true" ng-change="pagination.onPageChange()" total-items="pagination.totalItems" items-per-page="pagination.itemsPerPage" ng-model="pagination.currentPage" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>   
+
+			<ul ng-if="loadMoreArtists" ng-click="loadMoreArtists && loadMoreArtists()" class="ng-pristine ng-untouched ng-valid ng-isolate-scope pagination ng-not-empty">
+				<li role="menuitem" class="pagination-last ng-scope">
+					<a href="" class="ng-binding">More</a>
+				</li>
+			</ul>
+      	</div>
+
+      	<div class="submitBtnWrapper text-center">
+      		<button ng-click="submitArtists()" class="btn btn-lg btn-primary">Submit Artists</button>
+      	</div>
 	</div>
-	<div ng-if="!(AIRTABLE_TOKEN && PIPEDRIVE_TOKEN)">
+	<div id="changeTokensBtnWrapper" ng-if="AIRTABLE_TOKEN && PIPEDRIVE_TOKEN">
+		<button ng-click="showTokensModal()" class="btn btn-sm btn-default">Change Tokens</button>
+	</div>
+
+
+	<div id="tokensNotSet" ng-if="!(AIRTABLE_TOKEN && PIPEDRIVE_TOKEN)" class="text-center">
 		Tokens are not set, <a href ng-click="showTokensModal()">Set Tokens</a>
 	</div>
 	<script type="text/ng-template" id="tokensModal.html">
@@ -29,12 +86,12 @@
         <div class="modal-body" id="modal-body">
             <div class="input-group" ng-class="{'has-error': local.pipedriveTokenHasError}">
 			  <span class="input-group-addon" id="addon1">Pipedrive Token</span>
-			  <input type="text" class="form-control" ng-focus="local.pipedriveTokenHasError = false" ng-model="local.pipedriveToken" aria-describedby="addon1">
+			  <input type="text" class="form-control" ng-focus="local.pipedriveTokenHasError = false" ng-change="local.setPipedriveToken()" ng-model="local.pipedriveToken" aria-describedby="addon1">
 			</div>
 			<br />
 			<div class="input-group" ng-class="{'has-error': local.airtableTokenHasError}">
 			  <span class="input-group-addon" id="addon2">Airtable Token</span>
-			  <input type="text" class="form-control" ng-focus="local.airtableTokenHasError = false" ng-model="local.airtableToken" aria-describedby="addon2">
+			  <input type="text" class="form-control" ng-focus="local.airtableTokenHasError = false" ng-change="local.setAirtableToken()" ng-model="local.airtableToken" aria-describedby="addon2">
 			</div>
         </div>
         <div class="modal-footer">
