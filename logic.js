@@ -215,7 +215,18 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			categoryName,
 			artists,
 		}
-		console.log(json);
+		/*
+		$http({
+			method: "POST",
+			url: "<API_ENDPOINT>",
+			headers: {
+				"Authorization": "Bearer <API_KEY>"
+			},
+			date: json
+		}).then(response => {
+			// Process response
+		});
+		*/
 	}
 
 	$scope.restoreState = () => {
@@ -226,7 +237,6 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 
 	$scope.saveState = () => {
 		let state = {artists: $scope.artists.map(a => ({id: a.id, checked: a.checked})), currentPage: $scope.pagination.currentPage, search: $scope.search, sort: $scope.sort};
-		console.log("@saveState", state);
 		Utils.setState(state);
 	}
 
