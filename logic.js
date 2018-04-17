@@ -207,26 +207,28 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	});
 
 	$scope.submitArtists = () => {
-		let artists = $scope.artists.filter(a => a.checked).map(a => ({id: a.rowId, email: a.email}));
+		let artists = $scope.artists.filter(a => a.checked).map(a => a.id);
 		let categoryName = ($scope.categories.find(c => c.value == $scope.search.category) || {}).name
 		let json = {
-			dealId: $scope.dealId,
-			categoryId: $scope.search.category,
-			categoryName,
-			artists,
+			fields:{
+				dealid: parseInt($scope.dealId),
+				artists,
+			}
 		}
-		/*
 		$http({
 			method: "POST",
-			url: "<API_ENDPOINT>",
+			url: "https://api.airtable.com/v0/appAOUimmyFijLDUZ/ArtistSuggest",
 			headers: {
-				"Authorization": "Bearer <API_KEY>"
+				"Authorization": `Bearer ${$scope.AIRTABLE_TOKEN}`
 			},
-			date: json
+			data: json
 		}).then(response => {
-			// Process response
+			console.info("Artists were posted", response);
+		}).catch(e => {
+			console.warn("Unable to posts checked artists", e);
+			$scope.alerts.push({type: "ARTISTS", msg: "Unable to POST selected artists"});
 		});
-		*/
+		
 	}
 
 	$scope.restoreState = () => {
