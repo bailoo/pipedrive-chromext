@@ -5,8 +5,9 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	window.exposedScope = $scope;
 	$scope.sort = "asc";
 	$scope.categories = [{value: 0, name:"CATEGORY"}, {value: 1, name:"ANCHOR/EMCEE"},{value: 2, name:"CELEBRITY"}, {value: 3, name:"COMEDIAN"}, {value:4, name:"DANCER/TROUPE"}, {value:5, name:"DJ"}, {value:6, name:"INSTRUMENTALIST"}, {value:7, name:"LIVE BAND"}, {value:8, name:"MAGICIAN"}, {value:9, name:"MAKE-UP ARTIST"}, {value:10, name:"MODEL"}, {value:11, name:"PHOTOGRAPHER"}, {value:12, name:"SINGER"}, {value:13, name:"SPEAKER"}, {value:14, name:"VARIETY ARTIST"}];
+	$scope.event = [{value: 15, name:"Campus"}, {value: 16, name:"Charity"},{value: 18, name:"Corporate"}, {value: 19, name:"Exhibition"}, {value: 20, name:"Fashion Show"}, {value: 21, name:"Inauguration"}, {value: 22, name:"Kids Party"}, {value: 23, name:"Photo/Video Shoot"}, {value: 24, name:"Private Party"}, {value: 25, name:"Professional Hiring"}, {value: 26, name:"Religious"}, {value: 27, name:"Restaurant"}, {value: 28, name:"Wedding"}, {value: 17, name:"Concert/Festival"}];
 	$scope.pagination = {totalItems: 0, itemsPerPage: 10, currentPage: 1};
-	$scope.search = {category: 0, city: "", price: ""};
+	$scope.search = {category: 0, city: "", price: "", event: 0, clientname: "", dealowner: "", gathering: "", date: "", lookingfor: "", json: ""};
 	$scope.artists = [];
 	$scope.alerts = [];
 
@@ -143,8 +144,15 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				$scope.alerts = $scope.alerts.filter(a => a.type !== "DEAL");
 				$http.get(`https://api.pipedrive.com/v1/deals/${$scope.dealId}?api_token=${$scope.PIPEDRIVE_TOKEN}`).then(r => r.data).then(r => r.data).then(data => {
 					$scope.search.category = parseInt(data["61a501536a4065f5a970be5c6de536cf7ad14078"]);
+					$scope.search.event = parseInt(data["755ded0be98b3ee5157cf117566f0443bd93cc63"]);
 					$scope.search.price = data.value;
 					$scope.search.city = data["361085abd375a7eb3964f068295f12fe17d9f280_admin_area_level_2"];
+					$scope.search.gathering = data["1f9805fdb8715d773f1fc9457545b49c5b05d058"];
+					$scope.search.date = data["19c2c12d8fea52c4709cd4ce256b7852bc2b0259"];
+					$scope.search.lookingfor = data["ef1b3ca0c720a4c39ddf75adbc38ab4f8248597b"];
+					$scope.search.clientname = data["person_name"];
+					$scope.search.dealowner = data["owner_name"];
+					$scope.search.json = data;
 					$scope.loadArtists();
 					$scope.pagination.loading = false;
 				}).catch(e => {
@@ -209,12 +217,42 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.submitArtists = () => {
 		let artists = $scope.artists.filter(a => a.checked).map(a => a.id);
 		let categoryName = ($scope.categories.find(c => c.value == $scope.search.category) || {}).name
+		let eventName = ($scope.event.find(e => e.value == $scope.search.event) || {}).name
+
+		let artistQuery = "OR(";
+
+		for(i=0; i <= artists.length; i++){
+
+			if(i == artists.length){
+				artistQuery += ")";
+				break;
+			}
+			else{
+				if(i!=0)
+					artistQuery += ",";
+			}
+			artistQuery = artistQuery + "RECORD_ID()='" + artists[i] + "'";
+		}
+
 		let json = {
 			fields:{
 				dealid: parseInt($scope.dealId),
 				artists,
+				category: $scope.search.category,
+				categoryname: categoryName,
+				eventname: eventName,
+				city: $scope.search.city,
+				price: $scope.search.price,
+				gathering: $scope.search.gathering,
+				date: $scope.search.date,
+				lookingfor: $scope.search.lookingfor,
+				clientname: $scope.search.clientname,
+				dealowner: $scope.search.dealowner,
+				artistquery: artistQuery,
+				json: JSON.stringify($scope.search.json)
 			}
 		}
+
 		$http({
 			method: "POST",
 			url: "https://api.airtable.com/v0/appAOUimmyFijLDUZ/ArtistSuggest",

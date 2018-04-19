@@ -89,12 +89,12 @@
         <div class="modal-body" id="modal-body">
             <div class="input-group" ng-class="{'has-error': local.pipedriveTokenHasError}">
 			  <span class="input-group-addon" id="addon1">Pipedrive Token</span>
-			  <input type="text" class="form-control" ng-focus="local.pipedriveTokenHasError = false" ng-change="local.setPipedriveToken()" ng-model="local.pipedriveToken" aria-describedby="addon1">
+			  <input type="password" class="form-control" ng-focus="local.pipedriveTokenHasError = false" ng-change="local.setPipedriveToken()" ng-model="local.pipedriveToken" aria-describedby="addon1">
 			</div>
 			<br />
 			<div class="input-group" ng-class="{'has-error': local.airtableTokenHasError}">
 			  <span class="input-group-addon" id="addon2">Airtable Token</span>
-			  <input type="text" class="form-control" ng-focus="local.airtableTokenHasError = false" ng-change="local.setAirtableToken()" ng-model="local.airtableToken" aria-describedby="addon2">
+			  <input type="password" class="form-control" ng-focus="local.airtableTokenHasError = false" ng-change="local.setAirtableToken()" ng-model="local.airtableToken" aria-describedby="addon2">
 			</div>
         </div>
         <div class="modal-footer">
