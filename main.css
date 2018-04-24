@@ -1,10 +1,12 @@
 html, body {
   margin: 0;
   padding: 0;
-  max-width: 450px;
-  min-width: 450px;
-  min-height: 620px;
+  max-width: 520px;
+  min-width: 520px;
   font-size: 11px;
+  min-height: 599px;
+  max-height: 599px;
+  height: 599px;
   overflow: hidden;
 }
 
@@ -25,6 +27,19 @@ html, body {
 	height: 35px;
 }
 
+.searchBarComponent{
+	display: inline-block;
+}
+
+#searchButtonWrapper{
+	width: 95px; 
+	vertical-align: text-bottom;
+}
+
+.searchBarComponent input, .searchBarComponent select{
+	max-width: calc(100% / 4);
+}
+
 .icon{
 	margin-right: 8px;
 }
@@ -41,6 +56,10 @@ html, body {
 #sortBtnWrapper{
 	padding-top: 12px;
 	padding-right: 20%;
+}
+
+.sortBtn{
+	display: inline-block;
 }
 
 .sortBtn span{
@@ -88,12 +107,12 @@ html, body {
 
 
 .submitBtnWrapper{
-	padding-top: 25px;
+	padding-top: 15px;
 	padding-bottom: 15px;
 }
 
 #artistsWrapper{
-	max-height: 370px;
+	max-height: 355px;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
@@ -102,6 +121,20 @@ html, body {
 	padding-bottom: 15px;
 }
 
+.artistImage, .artistInfo{
+	display: inline-block;
+}
+
+.artistImage{
+	padding: 5px;
+}
+
+.artistImage i, .artistImage img{
+	width: 65px;
+	height: 65px;
+	font-size: 65px;
+	vertical-align: middle;
+}
 
 #changeTokensBtnWrapper{
 	position: absolute;

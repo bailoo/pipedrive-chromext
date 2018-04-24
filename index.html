@@ -6,12 +6,15 @@
 
 	<link rel="stylesheet" type="text/css" href="libs/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="libs/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" type="text/css" href="libs/css/select.min.css">
 	<link rel="stylesheet" type="text/css" href="checkboxes.css">
 	<link rel="stylesheet" type="text/css" href="main.css">
 
 	<script type="text/javascript" src="libs/js/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="libs/js/angular.min.js"></script>
 	<script type="text/javascript" src="libs/js/ui-bootstrap-tpls-2.5.0.min.js"></script>
+	<script type="text/javascript" src="libs/js/select.min.js"></script>
+	<script type="text/javascript" src="libs/js/angular-sanitize.js"></script>
 	<script type="text/javascript" src="libs/js/airtable.browser.js"></script>
 	<script type="text/javascript" src="Utils.js"></script>
 	<script type="text/javascript" src="logic.js"></script>
@@ -23,30 +26,72 @@
 			<button ng-click="loadDeal(dealId)" class="btn btn-sm btn-danger">Process Deal {{dealId}}</button>
 		</div>
 		<div id="searchBar" class="text-center">
-			<select ng-model="search.category">
-      			<option ng-repeat="option in categories" ng-value="option.value">{{option.name}}</option>
-      		</select>
-      		<input type="number" class="form-control" ng-model="search.price" placeholder="Price" title="Price" />
-      		<input type="text" class="form-control" ng-model="search.city" placeholder="City" title="City"/>
-      		<button ng-click="loadArtists(); saveState();" class="btn btn-info"><i class="icon glyphicon glyphicon-search"></i>Search</button>
+			<div style="display: inline-block;width: calc(100% - 100px);">
+				<div class="searchBarComponent">
+					<input type="text" class="form-control" ng-model="search.name" placeholder="Name" title="Name">
+					<select ng-model="search.category" ng-change="categoryChange()">
+		      			<option ng-repeat="option in categories" ng-value="option.value">{{option.name}}</option>
+		      		</select>
+		      		<input type="number" class="form-control" ng-model="search.price" placeholder="Price" title="Price" />
+		      		<input type="text" class="form-control" ng-model="search.city" placeholder="City" title="City"/>
+	      		</div>
+	      		<br />
+	      		<div class="searchBarComponent">
+		      		<select ng-mode="search.genere">
+		      			<option ng-repeat="genere in generes" ng-value="genere.value">{{genere.name}}</option>
+		      		</select>
+		      		<!-- <select  ng-mode="search.subcategories" multiple>
+		      			<option ng-repeat="subcategory in subcategories" ng-value="subcategory">{{subcategory}}</option>
+		      		</select> -->
+
+		      		<ui-select multiple ng-model="search.subcategory" title="Select Subcategory">
+					    <ui-select-match placeholder="Select Subcategory">{{$item}}</ui-select-match>
+					    <ui-select-choices repeat="subcategory in subcategories | filter:$select.search">
+					      {{subcategory}}
+					    </ui-select-choices>
+					  </ui-select>
+
+
+		      		<select ng-mode="search.subscription">
+		      			<option ng-repeat="subscription in subscriptions" ng-value="subscription">{{subscription}}</option>
+		      		</select>
+		      		<select ng-mode="search.language">
+		      			<option ng-repeat="language in languages" ng-value="language">{{language}}</option>
+		      		</select>
+	      		</div>
+      		</div>
+      		<div class="searchBarComponent" id="searchButtonWrapper">
+      			<button ng-click="loadArtists(); saveState();" class="btn btn-info"><i class="icon glyphicon glyphicon-search"></i>Search</button>
+      		</div>
       	</div>
+
       	<div id="sortBtnWrapper" class="text-right">
-      		<div class="sortBtn" ng-click="changeSort()">
-      			<span>Sort</span>
-      			<i class="rightIcon glyphicon glyphicon-arrow-up" ng-if="sort === 'asc'"></i>
-      			<i class="rightIcon glyphicon glyphicon-arrow-down" ng-if="sort === 'desc'"></i>
+      		<div class="sortBtn" ng-click="changeSorting('updated')">
+      			<span>Updated</span>
+      			<i class="rightIcon glyphicon glyphicon-arrow-up" ng-if="sorting.updated === 'asc'"></i>
+      			<i class="rightIcon glyphicon glyphicon-arrow-down" ng-if="sorting.updated === 'desc'"></i>
+      		</div>
+      		<div class="sortBtn" ng-click="changeSorting('price')">
+      			<span>Price</span>
+      			<i class="rightIcon glyphicon glyphicon-arrow-up" ng-if="sorting.price === 'asc'"></i>
+      			<i class="rightIcon glyphicon glyphicon-arrow-down" ng-if="sorting.price === 'desc'"></i>
       		</div>
       	</div>
       	<div id="artistsWrapper">
       		<h3 ng-if="pagination.totalItems === 0 && !pagination.loading" class="text-center">No artists for searched criteria</h3>
       		<div class="artistElm" ng-repeat="artist in artistsToShow">
+      			<div class="artistDetailsWrapper">
+      			<div class="artistImage">
+      				<i ng-if="!artist.thumbnail" class="glyphicon glyphicon-star"></i>
+      				<img ng-if="artist.thumbnail" src="http://starcdn.net/thumbnail{{artist.thumbnail}}">
+      			</div>
       			<div class="artistInfo">
 	      			<h4><a href="https://starclinch.com/{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
 	      			<div class="contactInfo">
 	      				<span class="email">{{artist.email}}</span>
 	      				<span class="phoneNumber">{{artist.phone}}</span>
 	      			</div>
-	      			<div class="subcategory">{{artist.subcategory}}</div>
+	      			<div class="subcategory">{{(artist.subcategory||[]).join(", ")}}</div>
       			</div><!-- 
       			 --><div class="artistPrice">Rs {{artist.price}}</div><!-- 
       			 --><div class="artistCheckbox">
@@ -57,6 +102,7 @@
 				          </label>
 				        </div>
       			 </div>
+      			</div>
       		</div>
       	</div>
 
@@ -71,6 +117,10 @@
       	</div>
 
       	<div class="submitBtnWrapper text-center">
+			<label style="font-size: 140%;">
+				<input type="checkbox" ng-model="search.includePrice">
+				<span class="cr">Include Price</span>
+			</label>
       		<button ng-click="submitArtists()" class="btn btn-lg btn-primary">Submit Artists</button>
       	</div>
 	</div>
