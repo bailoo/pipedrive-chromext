@@ -1,24 +1,30 @@
 const Airtable = require('airtable');
-const app = angular.module("myApp", ["ngSanitize", "ui.bootstrap"]);
+const app = angular.module("myApp", ["ui.bootstrap"]);
 
 app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", function($scope, $http, $uibModal, $timeout){
 	window.exposedScope = $scope;
-	$scope.categories = [{value: 0, name:"CATEGORY"}, {value: 1, name:"ANCHOR/EMCEE"},{value: 2, name:"CELEBRITY"}, {value: 3, name:"COMEDIAN"}, {value:4, name:"DANCER/TROUPE"}, {value:5, name:"DJ"}, {value:6, name:"INSTRUMENTALIST"}, {value:7, name:"LIVE BAND"}, {value:8, name:"MAGICIAN"}, {value:9, name:"MAKE-UP ARTIST"}, {value:10, name:"MODEL"}, {value:11, name:"PHOTOGRAPHER"}, {value:12, name:"SINGER"}, {value:13, name:"SPEAKER"}, {value:14, name:"VARIETY ARTIST"}];
+	$scope.categories = [{value: 0, name:"ANY CATEGORY"}, {value: 1, name:"ANCHOR/EMCEE"},{value: 2, name:"CELEBRITY"}, {value: 3, name:"COMEDIAN"}, {value:4, name:"DANCER/TROUPE"}, {value:5, name:"DJ"}, {value:6, name:"INSTRUMENTALIST"}, {value:7, name:"LIVE BAND"}, {value:8, name:"MAGICIAN"}, {value:9, name:"MAKE-UP ARTIST"}, {value:10, name:"MODEL"}, {value:11, name:"PHOTOGRAPHER"}, {value:12, name:"SINGER"}, {value:13, name:"SPEAKER"}, {value:14, name:"VARIETY ARTIST"}];
 	$scope.pagination = {totalItems: 0, itemsPerPage: 10, currentPage: 1};
-	$scope.search = {category: 0, city: "", price: "", subcategory: "Select Subcategory"};
+	$scope.search = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language"};
 	$scope.sorting = {price: "asc", updated: "asc"};
 	$scope.artists = [];
 	$scope.alerts = [];
+	$scope.submit = {includePrice: false}
 
-	$scope.subcategoriesMap = {1: ["Select Subcategory", "Anchor/Emcee","Anchor","Emcee","Voice over Artist", "Radio Jockey"], 2:["Select Subcategory","Celebrity", "Film Stars", "Sports Celebrities","TV Personalities","Pageant Winner"], 3: ["Select Subcategory","Comedian","Stand Up","Impersonators","Mimicry","Reality Show Comedians"], 4: ["Select Subcategory","Dancer/Troupe","Belly Dancers","Exotic Dancers","Bhangra","Bollywood","Choreographers","Indian Classical","Kids Troupe","Folk","Religious","Reality Show Dancers","Western"], 5: ["Select Subcategory","DJ","Techno","EDM","Trance","Bollywood","Rock","Dubstep","Deep House","Minimal", "VDJ","Electro","Progressive","Psychedelic","Trap","Bass"], 6:["Select Subcategory","Instrumentalist","Guitarist","Percussionist","Flutist","Pianist","Saxophonist","Keyboardist","Violinist","Indian Classical Instruments","One-man band"],7: ["Select Subcategory","Live Band","Sufi","Bollywood","Rock","Fusion","Pop","Jazz","Metal","Orchestra","Blues","Folk","Indie","Tribute","Alternative","Punk","Funk","Progressive","Psychedelic","Electronica","Rock n Roll","Reggae","Rap","Hip Hop"], 8: ["Select Subcategory","Magician","Stage Magicians","Illusionist","Close up Magicians","Hypnotist","Mind Reader"], 9: ["Select Subcategory","Make-up Artist","Fashion","Bridals & Parties","Film & Television","Wardrobe Stylist","Fashion Choreographer"], 10:["Select Subcategory","Model","Runway Models","Catalogue Models","Commercial Models","Glamour Models","Art Models","Promotional Models","Foreign Models","International Models"], 11: ["Select Subcategory","Photographer","Wedding","Baby","Candid","Concept","Corporate Films","Documentary Films","Events","Fashion","Short Films","Portfolio","Weddings","Portrait","Product"],12:["Select Subcategory","Singer","Bollywood","Classical","English Retro","Ghazal","Hindi Retro","Indian Folk","Karaoke","Qawwali","Religious","Acoustic Singer","Rapper"],13: ["Select Subcategory","Speaker","Motivational","Vocational","Spiritual","Training"],14: ["Select Subcategory","Variety Artist","Acrobat Artists","Balloon Artists","Bartenders","Caricaturists","Painters","Fire Artists","Jugglers","Mehendi Artists","Puppeteers","Stilt Walkers","Stunt Artists","Shadow Artists","Sand Artists","Whistler","Beatboxer"]};
-	$scope.subcategories = ["Select Subcategory"];
+	$scope.subcategoriesMap = {1: ["Any Subcategory", "Anchor/Emcee","Anchor","Emcee","Voice over Artist", "Radio Jockey"], 2:["Any Subcategory","Celebrity", "Film Stars", "Sports Celebrities","TV Personalities","Pageant Winner"], 3: ["Any Subcategory","Comedian","Stand Up","Impersonators","Mimicry","Reality Show Comedians"], 4: ["Any Subcategory","Dancer/Troupe","Belly Dancers","Exotic Dancers","Bhangra","Bollywood","Choreographers","Indian Classical","Kids Troupe","Folk","Religious","Reality Show Dancers","Western"], 5: ["Any Subcategory","DJ","Techno","EDM","Trance","Bollywood","Rock","Dubstep","Deep House","Minimal", "VDJ","Electro","Progressive","Psychedelic","Trap","Bass"], 6:["Any Subcategory","Instrumentalist","Guitarist","Percussionist","Flutist","Pianist","Saxophonist","Keyboardist","Violinist","Indian Classical Instruments","One-man band"],7: ["Any Subcategory","Live Band","Sufi","Bollywood","Rock","Fusion","Pop","Jazz","Metal","Orchestra","Blues","Folk","Indie","Tribute","Alternative","Punk","Funk","Progressive","Psychedelic","Electronica","Rock n Roll","Reggae","Rap","Hip Hop"], 8: ["Any Subcategory","Magician","Stage Magicians","Illusionist","Close up Magicians","Hypnotist","Mind Reader"], 9: ["Any Subcategory","Make-up Artist","Fashion","Bridals & Parties","Film & Television","Wardrobe Stylist","Fashion Choreographer"], 10:["Any Subcategory","Model","Runway Models","Catalogue Models","Commercial Models","Glamour Models","Art Models","Promotional Models","Foreign Models","International Models"], 11: ["Any Subcategory","Photographer","Wedding","Baby","Candid","Concept","Corporate Films","Documentary Films","Events","Fashion","Short Films","Portfolio","Weddings","Portrait","Product"],12:["Any Subcategory","Singer","Bollywood","Classical","English Retro","Ghazal","Hindi Retro","Indian Folk","Karaoke","Qawwali","Religious","Acoustic Singer","Rapper"],13: ["Any Subcategory","Speaker","Motivational","Vocational","Spiritual","Training"],14: ["Any Subcategory","Variety Artist","Acrobat Artists","Balloon Artists","Bartenders","Caricaturists","Painters","Fire Artists","Jugglers","Mehendi Artists","Puppeteers","Stilt Walkers","Stunt Artists","Shadow Artists","Sand Artists","Whistler","Beatboxer"]};
+	$scope.subcategories = ["Any Subcategory"];
 
-	$scope.generes = [{value: 0, name:"Select Genere"}, {value: 1, name:"Male"}, {value: 2, name: "Female"}, {value: 3, name: "Others"}];
-	$scope.subscriptions = ["Select Subscription", "Get Discovered", "Instant Gigs", "Power Up"];
-	$scope.languages = ["Select Language", "English","Hindi","Punjabi","Gujarati","Bengali","Malayalam","Marathi","Tamil","Telugu","Kannada","Assamese","Rajasthani"];
+	$scope.genders = ["Any Gender", "Male", "Female", "Others"];
+	$scope.subscriptions = ["Any Subscription", "Get Discovered", "Instant Gigs", "Power Up"];
+	$scope.languages = ["Any Language", "English","Hindi","Punjabi","Gujarati","Bengali","Malayalam","Marathi","Tamil","Telugu","Kannada","Assamese","Rajasthani"];
 
 	$scope.categoryChange = function(){
-		$scope.subcategories = $scope.subcategoriesMap[$scope.search.category] || ["Select Subcategori"];
+		if($scope.subcategoriesMap[$scope.search.category]){
+			$scope.subcategories = $scope.subcategoriesMap[$scope.search.category]
+		}else{
+		 	$scope.subcategories = ["Any Subcategory"];
+		 	$scope.search.subcategory = "Any Subcategory";
+		}
 	}
 
 	$scope.closeAlert = (index) => {
@@ -86,6 +92,11 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		let categoryObj = $scope.categories.find(c => c.value != 0 && c.value == $scope.search.category);
 		let conditions = [];
 		let filterByFormula = "";
+
+		if($scope.search.name){
+			conditions.push(`FIND("${$scope.search.name.toLowerCase()}", LOWER(professionalname))`)
+		}
+
 		if(categoryObj){
 			conditions.push(`FIND("${categoryObj.name.toLowerCase()}", LOWER(category))`);
 		}
@@ -94,6 +105,22 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		}
 		if($scope.search.price === 0 || ($scope.search.price && !isNaN($scope.search.price))){
 			conditions.push(`price<=${$scope.search.price}`);
+		}
+
+		if($scope.search.gender && $scope.search.gender !== "Any Gender"){
+			conditions.push(`FIND("${$scope.search.gender.toLowerCase()}", LOWER(gender))`)
+		}
+
+		if($scope.search.subcategory && $scope.search.subcategory !== "Any Subcategory"){
+			conditions.push(`FIND("${$scope.search.subcategory.toLowerCase()}", LOWER(subcategory))`)
+		}
+
+		if($scope.search.subscription && $scope.search.subscription !== "Any Subscription"){
+			conditions.push(`FIND("${$scope.search.subscription.toLowerCase()}", LOWER(subscription))`)
+		}
+
+		if($scope.search.language && $scope.search.language !== "Any Language"){
+			conditions.push(`FIND("${$scope.search.language.toLowerCase()}", LOWER(language))`)
 		}
 
 		if(conditions.length){
@@ -201,11 +228,14 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 								if(state){
 									if(state.search){
 										$scope.search = state.search;
+										$scope.categoryChange();
+										$scope.search.subcategory = state.search.subcategory;
 									}
 									if(state.sorting){
 										$scope.sorting = state.sorting;
 									}
 									$scope.dealId = dealId;
+									$scope.submit.includePrice = state.includePrice;
 								}
 								$scope.loadArtists(state);
 							});
@@ -224,6 +254,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		let json = {
 			fields:{
 				dealid: parseInt($scope.dealId),
+				includeprice: ($scope.submit.includePrice ? 1 : 0),
 				artists,
 			}
 		}
@@ -243,14 +274,8 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		
 	}
 
-	$scope.restoreState = () => {
-		Utils.getState(state => {
-
-		});
-	}
-
 	$scope.saveState = () => {
-		let state = {artists: $scope.artists.map(a => ({id: a.id, checked: a.checked})), currentPage: $scope.pagination.currentPage, search: $scope.search, sorting: $scope.sorting};
+		let state = {artists: $scope.artists.map(a => ({id: a.id, checked: a.checked})), currentPage: $scope.pagination.currentPage, search: $scope.search, sorting: $scope.sorting, includePrice: $scope.submit.includePrice};
 		Utils.setState(state);
 	}
 

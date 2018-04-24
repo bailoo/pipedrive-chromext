@@ -1,8 +1,8 @@
 html, body {
   margin: 0;
   padding: 0;
-  max-width: 520px;
-  min-width: 520px;
+  max-width: 550px;
+  min-width: 550px;
   font-size: 11px;
   min-height: 599px;
   max-height: 599px;
@@ -20,7 +20,6 @@ html, body {
 
 #searchBar input{
 	display: inline-block;
-	width: 95px;
 }
 
 #searchBar select{
@@ -29,6 +28,7 @@ html, body {
 
 .searchBarComponent{
 	display: inline-block;
+	width: 100%;
 }
 
 #searchButtonWrapper{
@@ -37,7 +37,8 @@ html, body {
 }
 
 .searchBarComponent input, .searchBarComponent select{
-	max-width: calc(100% / 4);
+	max-width: calc(100% / 4.1);
+	min-width: calc(100% / 4.1);
 }
 
 .icon{
@@ -62,6 +63,10 @@ html, body {
 	display: inline-block;
 }
 
+.updatedBtn{
+	padding-right: 20px;
+}
+
 .sortBtn span{
 	font-size: 120%;
 	font-weight: bolder;
@@ -84,13 +89,16 @@ html, body {
 	font-weight: 500;
 }
 
-.artistInfo, .artistPrice, .artistCheckbox {
+.artistInfo, .artistPrice, .artistCheckbox, .updated {
 	display: inline-block;
 	vertical-align: middle;
 }
+.artistPrice, .updated {
+	width: 110px;
+}
 
 .artistInfo{
-	width: 260px;
+	width: 180px;
 }
 .artistPrice {
 	text-align: center;
@@ -140,4 +148,8 @@ html, body {
 	position: absolute;
 	bottom: 0;
 	right: 0;
+}
+
+#includePriceCheckbox{
+	display: inline-block;
 }

@@ -6,15 +6,12 @@
 
 	<link rel="stylesheet" type="text/css" href="libs/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="libs/css/bootstrap-theme.min.css">
-	<link rel="stylesheet" type="text/css" href="libs/css/select.min.css">
 	<link rel="stylesheet" type="text/css" href="checkboxes.css">
 	<link rel="stylesheet" type="text/css" href="main.css">
 
 	<script type="text/javascript" src="libs/js/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" src="libs/js/angular.min.js"></script>
 	<script type="text/javascript" src="libs/js/ui-bootstrap-tpls-2.5.0.min.js"></script>
-	<script type="text/javascript" src="libs/js/select.min.js"></script>
-	<script type="text/javascript" src="libs/js/angular-sanitize.js"></script>
 	<script type="text/javascript" src="libs/js/airtable.browser.js"></script>
 	<script type="text/javascript" src="Utils.js"></script>
 	<script type="text/javascript" src="logic.js"></script>
@@ -37,25 +34,25 @@
 	      		</div>
 	      		<br />
 	      		<div class="searchBarComponent">
-		      		<select ng-mode="search.genere">
-		      			<option ng-repeat="genere in generes" ng-value="genere.value">{{genere.name}}</option>
+		      		<select ng-model="search.gender">
+		      			<option ng-repeat="gender in genders" ng-value="gender">{{gender}}</option>
 		      		</select>
-		      		<!-- <select  ng-mode="search.subcategories" multiple>
+		      		<select  ng-model="search.subcategory">
 		      			<option ng-repeat="subcategory in subcategories" ng-value="subcategory">{{subcategory}}</option>
-		      		</select> -->
+		      		</select>
 
-		      		<ui-select multiple ng-model="search.subcategory" title="Select Subcategory">
+		      		<!-- <ui-select multiple ng-model="search.subcategory" title="Select Subcategory">
 					    <ui-select-match placeholder="Select Subcategory">{{$item}}</ui-select-match>
 					    <ui-select-choices repeat="subcategory in subcategories | filter:$select.search">
 					      {{subcategory}}
 					    </ui-select-choices>
-					  </ui-select>
+					  </ui-select> -->
 
 
-		      		<select ng-mode="search.subscription">
+		      		<select ng-model="search.subscription">
 		      			<option ng-repeat="subscription in subscriptions" ng-value="subscription">{{subscription}}</option>
 		      		</select>
-		      		<select ng-mode="search.language">
+		      		<select ng-model="search.language">
 		      			<option ng-repeat="language in languages" ng-value="language">{{language}}</option>
 		      		</select>
 	      		</div>
@@ -66,7 +63,7 @@
       	</div>
 
       	<div id="sortBtnWrapper" class="text-right">
-      		<div class="sortBtn" ng-click="changeSorting('updated')">
+      		<div class="sortBtn updatedBtn" ng-click="changeSorting('updated')">
       			<span>Updated</span>
       			<i class="rightIcon glyphicon glyphicon-arrow-up" ng-if="sorting.updated === 'asc'"></i>
       			<i class="rightIcon glyphicon glyphicon-arrow-down" ng-if="sorting.updated === 'desc'"></i>
@@ -88,11 +85,12 @@
       			<div class="artistInfo">
 	      			<h4><a href="https://starclinch.com/{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
 	      			<div class="contactInfo">
-	      				<span class="email">{{artist.email}}</span>
-	      				<span class="phoneNumber">{{artist.phone}}</span>
+	      				<div class="email">{{artist.email}}</div>
+	      				<div class="phoneNumber">{{artist.phone}}</div>
+	      				<div class="city">{{artist.city}}</div>
 	      			</div>
-	      			<div class="subcategory">{{(artist.subcategory||[]).join(", ")}}</div>
       			</div><!-- 
+      			 --><div class="updated">{{artist.updated}}</div><!-- 
       			 --><div class="artistPrice">Rs {{artist.price}}</div><!-- 
       			 --><div class="artistCheckbox">
       			 		<div class="checkbox bigCheckbox">
@@ -117,10 +115,13 @@
       	</div>
 
       	<div class="submitBtnWrapper text-center">
-			<label style="font-size: 140%;">
-				<input type="checkbox" ng-model="search.includePrice">
-				<span class="cr">Include Price</span>
-			</label>
+      		<div id="includePriceCheckbox" class="checkbox bigCheckbox">
+	      		<label>
+		            <input type="checkbox" value="" ng-change="saveState()" ng-model="submit.includePrice">
+		            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+		            Include Price
+		          </label>
+	      	</div>
       		<button ng-click="submitArtists()" class="btn btn-lg btn-primary">Submit Artists</button>
       	</div>
 	</div>
