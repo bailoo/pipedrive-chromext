@@ -1,11 +1,12 @@
 const Airtable = require('airtable');
 const app = angular.module("myApp", ["ui.bootstrap"]);
+const DEFAULE_SEARCH_PARAMS = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language",   event: 0, clientname: "", dealowner: "", gathering: "", date: "", lookingfor: "", json: ""};
 
 app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", function($scope, $http, $uibModal, $timeout){
 	window.exposedScope = $scope;
 	$scope.categories = [{value: 0, name:"ANY CATEGORY"}, {value: 1, name:"ANCHOR/EMCEE"},{value: 2, name:"CELEBRITY"}, {value: 3, name:"COMEDIAN"}, {value:4, name:"DANCER/TROUPE"}, {value:5, name:"DJ"}, {value:6, name:"INSTRUMENTALIST"}, {value:7, name:"LIVE BAND"}, {value:8, name:"MAGICIAN"}, {value:9, name:"MAKE-UP ARTIST"}, {value:10, name:"MODEL"}, {value:11, name:"PHOTOGRAPHER"}, {value:12, name:"SINGER"}, {value:13, name:"SPEAKER"}, {value:14, name:"VARIETY ARTIST"}];
 	$scope.pagination = {totalItems: 0, itemsPerPage: 10, currentPage: 1};
-	$scope.search = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language",   event: 0, clientname: "", dealowner: "", gathering: "", date: "", lookingfor: "", json: ""};
+	$scope.search = {...DEFAULE_SEARCH_PARAMS};
 	$scope.sorting = {price: "asc", updated: "asc"};
 	$scope.event = [{value: 15, name:"Campus"}, {value: 16, name:"Charity"},{value: 18, name:"Corporate"}, {value: 19, name:"Exhibition"}, {value: 20, name:"Fashion Show"}, {value: 21, name:"Inauguration"}, {value: 22, name:"Kids Party"}, {value: 23, name:"Photo/Video Shoot"}, {value: 24, name:"Private Party"}, {value: 25, name:"Professional Hiring"}, {value: 26, name:"Religious"}, {value: 27, name:"Restaurant"}, {value: 28, name:"Wedding"}, {value: 17, name:"Concert/Festival"}];
 	$scope.artists = [];
@@ -205,6 +206,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		
 		if(dealId){
 			$scope.dealId = dealId;
+			$scope.search = {...DEFAULE_SEARCH_PARAMS};
 			loadDeal();
 		}else{
 			Utils.getDealId(dealId => {
