@@ -40,15 +40,6 @@
 		      		<select  ng-model="search.subcategory">
 		      			<option ng-repeat="subcategory in subcategories" ng-value="subcategory">{{subcategory}}</option>
 		      		</select>
-
-		      		<!-- <ui-select multiple ng-model="search.subcategory" title="Select Subcategory">
-					    <ui-select-match placeholder="Select Subcategory">{{$item}}</ui-select-match>
-					    <ui-select-choices repeat="subcategory in subcategories | filter:$select.search">
-					      {{subcategory}}
-					    </ui-select-choices>
-					  </ui-select> -->
-
-
 		      		<select ng-model="search.subscription">
 		      			<option ng-repeat="subscription in subscriptions" ng-value="subscription">{{subscription}}</option>
 		      		</select>
@@ -74,7 +65,7 @@
       			<i class="rightIcon glyphicon glyphicon-arrow-down" ng-if="sorting.price === 'desc'"></i>
       		</div>
       	</div>
-      	<div id="artistsWrapper">
+      	<div id="artistsWrapper" ng-style="{maxHeight: (355 - (dealId ? 35 : 0) - (alerts && alerts.length ? (alerts.length * 70) : 0)) + 'px'}">
       		<h3 ng-if="pagination.totalItems === 0 && !pagination.loading" class="text-center">No artists for searched criteria</h3>
       		<div class="artistElm" ng-repeat="artist in artistsToShow">
       			<div class="artistDetailsWrapper">
