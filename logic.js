@@ -260,21 +260,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		let artists = $scope.artists.filter(a => a.checked).map(a => a.id);
 		let categoryName = ($scope.categories.find(c => c.value == $scope.search.category) || {}).name
 		let eventName = ($scope.event.find(e => e.value == $scope.search.event) || {}).name
-
-		let artistQuery = "OR(";
-
-		for(i=0; i <= artists.length; i++){
-
-			if(i == artists.length){
-				artistQuery += ")";
-				break;
-			}
-			else{
-				if(i!=0)
-					artistQuery += ",";
-			}
-			artistQuery = artistQuery + "RECORD_ID()='" + artists[i] + "'";
-		}
+		let artistQuery = `OR(${artists.map(id => ("RECORD_ID()='" + id + "'")).join()})`;
 
 		let json = {
 			fields:{
