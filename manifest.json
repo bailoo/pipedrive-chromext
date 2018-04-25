@@ -2,12 +2,17 @@
 	"name": "PipeDrive ChromeEXT",
 	"description": "PipeDrive ChromeEXT",
 	"version": "0.1",
+	"background": {
+    	"scripts": ["background.js"],
+    	"persistent": false
+  	},
 	"permissions": 
 	[
 		"storage",
-		"tabs"
+		"tabs",
+		"declarativeContent"
 	],
-	"browser_action": {
+	"page_action": {
       "default_popup": "index.html"
   	},
 	"manifest_version": 2,
