@@ -168,7 +168,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			$timeout(() => {
 				$scope.loadMoreArtists = undefined;
 				if(error){
-					$scope.alerts.push({type: "ARTISTS", msg: "Unable to load artists. Make sure the AirTable token is valid."});
+					$scope.alerts.push({danger: true, msg: "Unable to load artists. Make sure the AirTable token is valid."});
 				}
 				$scope.pagination.loading = false;
 			});
@@ -197,7 +197,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					$scope.pagination.loading = false;
 				}).catch(e => {
 					$scope.pagination.loading = false;
-					$scope.alerts.push({type:"DEAL", msg: `Unable to get deal "${$scope.dealId}" details. Make sure the PipeDrive token is valid.`});
+					$scope.alerts.push({danger: true, msg: `Unable to get deal "${$scope.dealId}" details. Make sure the PipeDrive token is valid.`});
 				});
 			}else{
 				$scope.loadArtists();
@@ -293,9 +293,10 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			data: json
 		}).then(response => {
 			console.info("Artists were posted", response);
+			$scope.alerts.push({success: true, msg: "Artists were submited"});
 		}).catch(e => {
 			console.warn("Unable to posts checked artists", e);
-			$scope.alerts.push({type: "ARTISTS", msg: "Unable to POST selected artists"});
+			$scope.alerts.push({danger: true, msg: "Unable to POST selected artists"});
 		});
 		
 	}

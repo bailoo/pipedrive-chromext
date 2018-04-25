@@ -17,7 +17,7 @@
 	<script type="text/javascript" src="logic.js"></script>
 </head>
 <body ng-controller="mainController">
-	<div uib-alert ng-repeat="alert in alerts" class="alert-danger text-center" close="closeAlert($index)">{{alert.msg}}</div>
+	<div uib-alert ng-repeat="alert in alerts" class="text-center" ng-class="{'alert-danger': alert.danger, 'alert-success': alert.success}" close="closeAlert($index)">{{alert.msg}}</div>
 	<div id="mainWrapper" ng-if="AIRTABLE_TOKEN && PIPEDRIVE_TOKEN">
 		<div ng-if="dealId" id="processDealBtnWrapper" class="text-center">
 			<button ng-click="loadDeal(dealId)" class="btn btn-sm btn-danger">Process Deal {{dealId}}</button>
