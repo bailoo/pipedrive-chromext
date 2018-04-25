@@ -7,7 +7,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.categories = [{value: 0, name:"ANY CATEGORY"}, {value: 1, name:"ANCHOR/EMCEE"},{value: 2, name:"CELEBRITY"}, {value: 3, name:"COMEDIAN"}, {value:4, name:"DANCER/TROUPE"}, {value:5, name:"DJ"}, {value:6, name:"INSTRUMENTALIST"}, {value:7, name:"LIVE BAND"}, {value:8, name:"MAGICIAN"}, {value:9, name:"MAKE-UP ARTIST"}, {value:10, name:"MODEL"}, {value:11, name:"PHOTO/VIDEOGRAPHER"}, {value:12, name:"SINGER"}, {value:13, name:"SPEAKER"}, {value:14, name:"VARIETY ARTIST"}];
 	$scope.pagination = {totalItems: 0, itemsPerPage: 10, currentPage: 1};
 	$scope.search = {...DEFAULE_SEARCH_PARAMS};
-	$scope.sorting = {price: "asc", updated: "asc"};
+	$scope.sorting = {price: "asc", updated: "asc", order: ["price", "updated"]};
 	$scope.event = [{value: 15, name:"Campus"}, {value: 16, name:"Charity"},{value: 18, name:"Corporate"}, {value: 19, name:"Exhibition"}, {value: 20, name:"Fashion Show"}, {value: 21, name:"Inauguration"}, {value: 22, name:"Kids Party"}, {value: 23, name:"Photo/Video Shoot"}, {value: 24, name:"Private Party"}, {value: 25, name:"Professional Hiring"}, {value: 26, name:"Religious"}, {value: 27, name:"Restaurant"}, {value: 28, name:"Wedding"}, {value: 17, name:"Concert/Festival"}];
 	$scope.artists = [];
 	$scope.alerts = [];
@@ -42,6 +42,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			$scope.sorting[key] = "asc";
 		}
 		$scope.loadArtists();
+		$scope.sorting.order = [key, (key === "updated" ? "price" : "updated")];
 	}
 
 	$scope.showTokensModal = () => {
@@ -88,7 +89,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		let options = {
 						view: "TestView",
 		    			fields: ["id", "professionalname", "price", "city", "email", "phone", "subcategory", "url", "thumbnail", "updated"],
-		    			sort: [{field: "price", direction: $scope.sorting.price}, {field: "updated", direction: $scope.sorting.updated}]
+		    			sort: $scope.sorting.order.map(k => ({field: k, direction: $scope.sorting[k]}))
 		    		}
 
 		let categoryObj = $scope.categories.find(c => c.value != 0 && c.value == $scope.search.category);
@@ -242,7 +243,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 										$scope.search.subcategory = state.search.subcategory;
 									}
 									if(state.sorting){
-										$scope.sorting = state.sorting;
+										$scope.sorting = {...$scope.sorting, ...state.sorting};
 									}
 									$scope.dealId = dealId;
 									$scope.submit.includePrice = state.includePrice;
