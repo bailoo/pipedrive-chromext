@@ -54,12 +54,12 @@
       	</div>
 
       	<div id="sortBtnWrapper" class="text-right">
-      		<div class="sortBtn updatedBtn" ng-click="changeSorting('updated')">
+      		<div class="sortBtn updatedBtn" ng-click="changeSorting('updated')" ng-style="{color: (sorting.order[0] === 'updated' ? 'lightgreen' : 'black')}">
       			<span>Updated</span>
       			<i class="rightIcon glyphicon glyphicon-arrow-up" ng-if="sorting.updated === 'asc'"></i>
       			<i class="rightIcon glyphicon glyphicon-arrow-down" ng-if="sorting.updated === 'desc'"></i>
       		</div>
-      		<div class="sortBtn" ng-click="changeSorting('price')">
+      		<div class="sortBtn" ng-click="changeSorting('price')" ng-style="{color: (sorting.order[0] === 'price' ? 'lightgreen' : 'black')}">
       			<span>Price</span>
       			<i class="rightIcon glyphicon glyphicon-arrow-up" ng-if="sorting.price === 'asc'"></i>
       			<i class="rightIcon glyphicon glyphicon-arrow-down" ng-if="sorting.price === 'desc'"></i>
@@ -75,14 +75,10 @@
       			</div>
       			<div class="artistInfo">
 	      			<h4><a href="https://starclinch.com/{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
-	      			<span>
-	      				<span ng-if="artist.subscription === 'Power Up'"" title="Subscription Type" style="display: inline-block; height: 15px; width: 15px; background-color: #ffc20e; border-radius: 50%;"></span>
-	      				<span ng-if="artist.subscription === 'Get Discovered'"" title="Subscription Type" style="display: inline-block; height: 15px; width: 15px; background-color: #37c2a8; border-radius: 50%;"></span>
-	      				<span ng-if="artist.subscription === 'Instant Gigs'"" title="Subscription Type" style="display: inline-block; height: 15px; width: 15px; background-color: #f57171; border-radius: 50%;"></span>
-	      				<span ng-if="artist.subscription === ''"" title="Subscription Type" style="display: inline-block; height: 15px; width: 15px; background-color: #eff0f1; border-radius: 50%;"></span>
-
-	      				<span style="display: inline-block; font-size: 12px;">(<span title="Pitch Count">{{artist.pitchcount}}</span>, <span title="Gig Count">{{artist.gigcount}}</span>)</span>
-	      			</span>
+	      			<div class="artistInfoSpansWrapper">
+	      				<div ng-if="subscriptionColors[artist.subscription]" class="subscriptionIndicator" title="Subscription Type" ng-style="{backgroundColor: subscriptionColors[artist.subscription]}"></div>
+	      				<span class="pitchAndGigCount">(<span title="Pitch Count">{{artist.pitchcount}}</span>, <span title="Gig Count">{{artist.gigcount}}</span>)</span>
+	      			</div>
 	      			<div class="contactInfo">
 	      				<div class="email">{{artist.email}}</div>
 	      				<div class="phoneNumber">{{artist.phone}}</div>

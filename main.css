@@ -1,13 +1,13 @@
 html, body {
-  margin: 0;
-  padding: 0;
-  max-width: 550px;
-  min-width: 550px;
-  font-size: 11px;
-  min-height: 599px;
-  max-height: 599px;
-  height: 599px;
-  overflow: hidden;
+	margin: 0;
+	padding: 0;
+	max-width: 550px;
+	min-width: 550px;
+	font-size: 11px;
+	min-height: 599px;
+	max-height: 599px;
+	height: 599px;
+	overflow: hidden;
 }
 
 #tokensNotSet{
@@ -152,4 +152,16 @@ html, body {
 
 #includePriceCheckbox{
 	display: inline-block;
+}
+
+.subscriptionIndicator{
+	display: inline-block; 
+	height: 15px; 
+	width: 15px; 
+	border-radius: 50%;
+	vertical-align: top;
+}
+
+.pitchAndGigCount{
+	font-size: 12;
 }

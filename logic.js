@@ -4,6 +4,7 @@ const DEFAULE_SEARCH_PARAMS = {name: "", category: 0, city: "", price: "",gender
 
 app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", function($scope, $http, $uibModal, $timeout){
 	window.exposedScope = $scope;
+	$scope.subscriptionColors = {"Power Up": "#ffc20e", "Get Discovered": "#37c2a8", "Instant Gigs": "#f57171", "": "#eff0f1"};
 	$scope.categories = [{value: 0, name:"ANY CATEGORY"}, {value: 1, name:"ANCHOR/EMCEE"},{value: 2, name:"CELEBRITY"}, {value: 3, name:"COMEDIAN"}, {value:4, name:"DANCER/TROUPE"}, {value:5, name:"DJ"}, {value:6, name:"INSTRUMENTALIST"}, {value:7, name:"LIVE BAND"}, {value:8, name:"MAGICIAN"}, {value:9, name:"MAKE-UP ARTIST"}, {value:10, name:"MODEL"}, {value:11, name:"PHOTO/VIDEOGRAPHER"}, {value:12, name:"SINGER"}, {value:13, name:"SPEAKER"}, {value:14, name:"VARIETY ARTIST"}];
 	$scope.pagination = {totalItems: 0, itemsPerPage: 10, currentPage: 1};
 	$scope.search = {...DEFAULE_SEARCH_PARAMS};
