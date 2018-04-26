@@ -87,15 +87,24 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		$scope.loadMoreArtists = undefined;
 		$scope.artistsToShow = [];
 
+		let eventName = ($scope.event.find(e => e.value == $scope.search.event) || {}).name;
+		if(eventName){
+			eventName = eventName.toLowerCase().replace(/[^a-z]/g, "");
+		}
+
 		let options = {
 						view: "TestView",
 		    			fields: ["id", "professionalname", "price", "city", "email", "phone", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription"],
-		    			sort: $scope.sorting.order.map(k => ({field: k, direction: $scope.sorting[k]}))
+		    			sort: $scope.sorting.order.map(k => ({field: (k === "price" && eventName ? `${eventName}_p` : k), direction: $scope.sorting[k]}))
 		    		}
 
 		let categoryObj = $scope.categories.find(c => c.value != 0 && c.value == $scope.search.category);
 		let conditions = [];
 		let filterByFormula = "";
+
+		if(eventName){
+			conditions.push(`FIND("${eventName}", LOWER(events))`)
+		}
 
 		if($scope.search.name){
 			conditions.push(`FIND("${$scope.search.name.toLowerCase()}", LOWER(professionalname))`)
