@@ -1,10 +1,10 @@
 const Airtable = require('airtable');
 const app = angular.module("myApp", ["ui.bootstrap"]);
-const DEFAULE_SEARCH_PARAMS = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language",   event: 0, clientname: "", dealowner: "", gathering: "", date: "", lookingfor: "", json: ""};
+const DEFAULE_SEARCH_PARAMS = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language",   event: 0, clientname: "", clientemail:"", dealowner: "", gathering: "", date: "", lookingfor: "", json: ""};
 
 app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", function($scope, $http, $uibModal, $timeout){
 	window.exposedScope = $scope;
-	$scope.subscriptionColors = {"Power Up": "#ffc20e", "Get Discovered": "#37c2a8", "Instant Gigs": "#f57171", "": "#eff0f1"};
+	$scope.subscriptionColors = {"Power Up": "#ffc20e", "Get Discovered": "#37c2a8", "Instant Gigs": "#f57171", "No Subscription": "#eff0f1", "": "#eff0f1"};
 	$scope.categories = [{value: 0, name:"ANY CATEGORY"}, {value: 1, name:"ANCHOR/EMCEE"},{value: 2, name:"CELEBRITY"}, {value: 3, name:"COMEDIAN"}, {value:4, name:"DANCER/TROUPE"}, {value:5, name:"DJ"}, {value:6, name:"INSTRUMENTALIST"}, {value:7, name:"LIVE BAND"}, {value:8, name:"MAGICIAN"}, {value:9, name:"MAKE-UP ARTIST"}, {value:10, name:"MODEL"}, {value:11, name:"PHOTO/VIDEOGRAPHER"}, {value:12, name:"SINGER"}, {value:13, name:"SPEAKER"}, {value:14, name:"VARIETY ARTIST"}];
 	$scope.pagination = {totalItems: 0, itemsPerPage: 10, currentPage: 1};
 	$scope.search = {...DEFAULE_SEARCH_PARAMS};
@@ -202,6 +202,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					$scope.search.date = data["19c2c12d8fea52c4709cd4ce256b7852bc2b0259"];
 					$scope.search.lookingfor = data["ef1b3ca0c720a4c39ddf75adbc38ab4f8248597b"];
 					$scope.search.clientname = data["person_name"];
+					$scope.search.clientemail = data["person_id"]["email"][0]["value"];
 					$scope.search.dealowner = data["owner_name"];
 					$scope.search.json = data;
 					$scope.loadArtists();
@@ -289,6 +290,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				date: $scope.search.date,
 				lookingfor: $scope.search.lookingfor,
 				clientname: $scope.search.clientname,
+				clientemail: $scope.search.clientemail,
 				dealowner: $scope.search.dealowner,
 				artistquery: artistQuery,
 				json: JSON.stringify($scope.search.json)
