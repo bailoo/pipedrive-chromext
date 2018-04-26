@@ -88,11 +88,14 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		$scope.pagination.totalItems = 0;
 		$scope.loadMoreArtists = undefined;
 		$scope.artistsToShow = [];
-
+		let fields = ["id", "professionalname", "price", "city", "email", "phone", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription"];
+		if($scope.eventName){
+			fields.push($scope.eventName + "_p");
+		}
 
 		let options = {
 						view: "TestView",
-		    			fields: [...$scope.event.map(v => v.name.toLowerCase().replace(/[^a-z]/g, "") + "_p"), "id", "professionalname", "price", "city", "email", "phone", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription"],
+		    			fields,
 		    			sort: $scope.sorting.order.map(k => ({field: (k === "price" && $scope.eventName ? `${$scope.eventName}_p` : k), direction: $scope.sorting[k]}))
 		    		}
 
@@ -187,7 +190,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.setEventName = () => {
 		$scope.eventName = ($scope.event.find(e => e.value == $scope.search.event) || {}).name;
 		if($scope.eventName){
-			$scope.eventName = $scope.eventName.toLowerCase().replace(/[a-z]/g, "");
+			$scope.eventName = $scope.eventName.toLowerCase().replace(/[^a-z]/g, "");
 		}
 	}
 
