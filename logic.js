@@ -14,6 +14,8 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.alerts = [];
 	$scope.submit = {includePrice: false}
 
+	$scope.eventName = "";
+
 	$scope.subcategoriesMap = {1: ["Any Subcategory", "Anchor/Emcee","Anchor","Emcee","Voice over Artist", "Radio Jockey"], 2:["Any Subcategory","Celebrity", "Film Stars", "Sports Celebrities","TV Personalities","Pageant Winner"], 3: ["Any Subcategory","Comedian","Stand Up","Impersonators","Mimicry","Reality Show Comedians"], 4: ["Any Subcategory","Dancer/Troupe","Belly Dancers","Exotic Dancers","Bhangra","Bollywood","Choreographers","Indian Classical","Kids Troupe","Folk","Religious","Reality Show Dancers","Western"], 5: ["Any Subcategory","DJ","Techno","EDM","Trance","Bollywood","Rock","Dubstep","Deep House","Minimal", "VDJ","Electro","Progressive","Psychedelic","Trap","Bass"], 6:["Any Subcategory","Instrumentalist","Guitarist","Percussionist","Flutist","Pianist","Saxophonist","Keyboardist","Violinist","Indian Classical Instruments","One-man band"],7: ["Any Subcategory","Live Band","Sufi","Bollywood","Rock","Fusion","Pop","Jazz","Metal","Orchestra","Blues","Folk","Indie","Tribute","Alternative","Punk","Funk","Progressive","Psychedelic","Electronica","Rock n Roll","Reggae","Rap","Hip Hop"], 8: ["Any Subcategory","Magician","Stage Magicians","Illusionist","Close up Magicians","Hypnotist","Mind Reader"], 9: ["Any Subcategory","Make-up Artist","Fashion","Bridals & Parties","Film & Television","Wardrobe Stylist","Fashion Choreographer"], 10:["Any Subcategory","Model","Runway Models","Catalogue Models","Commercial Models","Glamour Models","Art Models","Promotional Models","Foreign Models","International Models"], 11: ["Any Subcategory","Photographer","Wedding","Baby","Candid","Concept","Corporate Films","Documentary Films","Events","Fashion","Short Films","Portfolio","Weddings","Portrait","Product"],12:["Any Subcategory","Singer","Bollywood","Classical","English Retro","Ghazal","Hindi Retro","Indian Folk","Karaoke","Qawwali","Religious","Acoustic Singer","Rapper"],13: ["Any Subcategory","Speaker","Motivational","Vocational","Spiritual","Training"],14: ["Any Subcategory","Variety Artist","Acrobat Artists","Balloon Artists","Bartenders","Caricaturists","Painters","Fire Artists","Jugglers","Mehendi Artists","Puppeteers","Stilt Walkers","Stunt Artists","Shadow Artists","Sand Artists","Whistler","Beatboxer"]};
 	$scope.subcategories = ["Any Subcategory"];
 
@@ -87,23 +89,19 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		$scope.loadMoreArtists = undefined;
 		$scope.artistsToShow = [];
 
-		let eventName = ($scope.event.find(e => e.value == $scope.search.event) || {}).name;
-		if(eventName){
-			eventName = eventName.toLowerCase().replace(/[^a-z]/g, "");
-		}
 
 		let options = {
 						view: "TestView",
-		    			fields: ["id", "professionalname", "price", "city", "email", "phone", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription"],
-		    			sort: $scope.sorting.order.map(k => ({field: (k === "price" && eventName ? `${eventName}_p` : k), direction: $scope.sorting[k]}))
+		    			fields: [...$scope.event.map(v => v.name.toLowerCase().replace(/[^a-z]/g, "") + "_p"), "id", "professionalname", "price", "city", "email", "phone", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription"],
+		    			sort: $scope.sorting.order.map(k => ({field: (k === "price" && $scope.eventName ? `${$scope.eventName}_p` : k), direction: $scope.sorting[k]}))
 		    		}
 
 		let categoryObj = $scope.categories.find(c => c.value != 0 && c.value == $scope.search.category);
 		let conditions = [];
 		let filterByFormula = "";
 
-		if(eventName){
-			conditions.push(`FIND("${eventName}", LOWER(events))`)
+		if($scope.eventName){
+			conditions.push(`FIND("${$scope.eventName}", LOWER(events))`)
 		}
 
 		if($scope.search.name){
@@ -186,6 +184,13 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		});
 	}
 
+	$scope.setEventName = () => {
+		$scope.eventName = ($scope.event.find(e => e.value == $scope.search.event) || {}).name;
+		if($scope.eventName){
+			$scope.eventName = $scope.eventName.toLowerCase().replace(/[a-z]/g, "");
+		}
+	}
+
 
 	$scope.loadDeal = dealId => {
 		let loadDeal = () => {
@@ -195,6 +200,9 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				$http.get(`https://api.pipedrive.com/v1/deals/${$scope.dealId}?api_token=${$scope.PIPEDRIVE_TOKEN}`).then(r => r.data).then(r => r.data).then(data => {
 					$scope.search.category = parseInt(data["61a501536a4065f5a970be5c6de536cf7ad14078"]);
 					$scope.search.event = parseInt(data["755ded0be98b3ee5157cf117566f0443bd93cc63"]);
+
+					$scope.setEventName();
+
 					$scope.search.price = data.value;
 					$scope.search.city = data["361085abd375a7eb3964f068295f12fe17d9f280_admin_area_level_2"];
 					$scope.search.name = data["ef1b3ca0c720a4c39ddf75adbc38ab4f8248597b"];
@@ -252,6 +260,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 										$scope.search = state.search;
 										$scope.categoryChange();
 										$scope.search.subcategory = state.search.subcategory;
+										$scope.setEventName();
 									}
 									if(state.sorting){
 										$scope.sorting = {...$scope.sorting, ...state.sorting};
@@ -273,7 +282,6 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.submitArtists = () => {
 		let artists = $scope.artists.filter(a => a.checked).map(a => a.id);
 		let categoryName = ($scope.categories.find(c => c.value == $scope.search.category) || {}).name
-		let eventName = ($scope.event.find(e => e.value == $scope.search.event) || {}).name
 		let artistQuery = `OR(${artists.map(id => ("RECORD_ID()='" + id + "'")).join()})`;
 
 		let json = {
@@ -283,7 +291,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				artists,
 				category: $scope.search.category,
 				categoryname: categoryName,
-				eventname: eventName,
+				eventname: $scope.eventName,
 				city: $scope.search.city,
 				price: $scope.search.price,
 				gathering: $scope.search.gathering,
