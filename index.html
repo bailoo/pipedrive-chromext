@@ -75,6 +75,14 @@
       			</div>
       			<div class="artistInfo">
 	      			<h4><a href="https://starclinch.com/{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
+	      			<span>
+	      				<span ng-if="artist.subscription === 'Power Up'"" title="Subscription Type" style="display: inline-block; height: 15px; width: 15px; background-color: #ffc20e; border-radius: 50%;"></span>
+	      				<span ng-if="artist.subscription === 'Get Discovered'"" title="Subscription Type" style="display: inline-block; height: 15px; width: 15px; background-color: #37c2a8; border-radius: 50%;"></span>
+	      				<span ng-if="artist.subscription === 'Instant Gigs'"" title="Subscription Type" style="display: inline-block; height: 15px; width: 15px; background-color: #f57171; border-radius: 50%;"></span>
+	      				<span ng-if="artist.subscription === ''"" title="Subscription Type" style="display: inline-block; height: 15px; width: 15px; background-color: #eff0f1; border-radius: 50%;"></span>
+
+	      				<span style="display: inline-block; font-size: 12px;">(<span title="Pitch Count">{{artist.pitchcount}}</span>, <span title="Gig Count">{{artist.gigcount}}</span>)</span>
+	      			</span>
 	      			<div class="contactInfo">
 	      				<div class="email">{{artist.email}}</div>
 	      				<div class="phoneNumber">{{artist.phone}}</div>

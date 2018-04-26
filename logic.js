@@ -88,7 +88,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 
 		let options = {
 						view: "TestView",
-		    			fields: ["id", "professionalname", "price", "city", "email", "phone", "subcategory", "url", "thumbnail", "updated"],
+		    			fields: ["id", "professionalname", "price", "city", "email", "phone", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription"],
 		    			sort: $scope.sorting.order.map(k => ({field: k, direction: $scope.sorting[k]}))
 		    		}
 
