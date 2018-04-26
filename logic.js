@@ -1,6 +1,6 @@
 const Airtable = require('airtable');
 const app = angular.module("myApp", ["ui.bootstrap"]);
-const DEFAULE_SEARCH_PARAMS = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language",   event: 0, clientname: "", dealowner: "", gathering: "", date: "", lookingfor: "", json: ""};
+const DEFAULE_SEARCH_PARAMS = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language",   event: 0, clientname: "", clientemail:"", dealowner: "", gathering: "", date: "", lookingfor: "", json: ""};
 
 app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", function($scope, $http, $uibModal, $timeout){
 	window.exposedScope = $scope;
@@ -192,6 +192,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					$scope.search.date = data["19c2c12d8fea52c4709cd4ce256b7852bc2b0259"];
 					$scope.search.lookingfor = data["ef1b3ca0c720a4c39ddf75adbc38ab4f8248597b"];
 					$scope.search.clientname = data["person_name"];
+					$scope.search.clientemail = data["person_id"]["email"][0]["value"];
 					$scope.search.dealowner = data["owner_name"];
 					$scope.search.json = data;
 					$scope.loadArtists();
@@ -279,6 +280,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				date: $scope.search.date,
 				lookingfor: $scope.search.lookingfor,
 				clientname: $scope.search.clientname,
+				clientemail: $scope.search.clientemail,
 				dealowner: $scope.search.dealowner,
 				artistquery: artistQuery,
 				json: JSON.stringify($scope.search.json)
