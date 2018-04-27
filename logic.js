@@ -118,7 +118,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			conditions.push(`FIND("${$scope.search.city.toLowerCase()}", LOWER(city))`);
 		}
 		if($scope.search.price === 0 || ($scope.search.price && !isNaN($scope.search.price))){
-			conditions.push(`price<=${$scope.search.price}`);
+			conditions.push(`${$scope.eventName}_p<=${$scope.search.price}`);
 		}
 
 		if($scope.search.gender && $scope.search.gender !== "Any Gender"){
