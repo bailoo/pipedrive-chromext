@@ -76,10 +76,8 @@
       			<div class="artistInfo">
 	      			<h4><a href="https://starclinch.com/{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
 	      			<div class="artistInfoSpansWrapper">
-	      				<div ng-if="subscriptionColors[artist.subscription]" class="subscriptionIndicator" title="Subscription Type" ng-style="{backgroundColor: subscriptionColors[artist.subscription]}"></div>
+	      				<div ng-if="subscriptionColors[artist.subscription]" class="subscriptionIndicator" ng-attr-title="{{artist.subscription}} Subscription" ng-style="{backgroundColor: subscriptionColors[artist.subscription]}"></div>
 	      				<span class="pitchAndGigCount">(<span title="Pitch Count">{{artist.pitchcount}}</span>, <span title="Gig Count">{{artist.gigcount}}</span>)</span>
-
-	      				<span class="pitchAndGigCount">(<span title="Pitch Count">{{artist.pitchcount ? artist.pitchcount : '0'}}</span>, <span title="Gig Count">{{artist.gigcount ? artist.gigcount : '0'}}</span>)</span>
 	      			</div>
 	      			<div class="contactInfo">
 	      				<div class="email">{{artist.email}}</div>
