@@ -11,6 +11,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.sorting = {price: "asc", updated: "asc", order: ["price", "updated"]};
 	$scope.event = [{value: 15, name:"Campus"}, {value: 16, name:"Charity"},{value: 18, name:"Corporate"}, {value: 19, name:"Exhibition"}, {value: 20, name:"Fashion Show"}, {value: 21, name:"Inauguration"}, {value: 22, name:"Kids Party"}, {value: 23, name:"Photo/Video Shoot"}, {value: 24, name:"Private Party"}, {value: 25, name:"Professional Hiring"}, {value: 26, name:"Religious"}, {value: 27, name:"Restaurant"}, {value: 28, name:"Wedding"}, {value: 17, name:"Concert/Festival"}];
 	$scope.artists = [];
+	$scope.artistshtmlarray = [];
 	$scope.alerts = [];
 	$scope.submit = {includePrice: false}
 
@@ -88,7 +89,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		$scope.pagination.totalItems = 0;
 		$scope.loadMoreArtists = undefined;
 		$scope.artistsToShow = [];
-		let fields = ["id", "professionalname", "city", "email", "phone", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription"];
+		let fields = ["id", "professionalname", "city", "email", "phone", "category", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription"];
 		if($scope.eventName){
 			fields.push($scope.eventName + "_p");
 		}
@@ -157,6 +158,15 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					}
 					return artist;
 				}));
+
+				$scope.artistshtmlarray.push(...records.map(v => {
+					let artistt = {...v.fields, rowId: v.fields, id: v.id};
+					if(state && state.artists){
+						artistt.checked = (state.artists.find(a => a.id === artistt.id) || {}).checked;
+					}
+					return artistt;
+				}));
+				console.log($scope.artistshtmlarray);
 
 				let start = 0;
 				let end = $scope.itemsPerPage;
@@ -287,6 +297,51 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		let categoryName = ($scope.categories.find(c => c.value == $scope.search.category) || {}).name
 		let artistQuery = `OR(${artists.map(id => ("RECORD_ID()='" + id + "'")).join()})`;
 
+		let artistshtmlstring = "";
+		let artistshtml = $scope.artists.filter(a => a.checked);
+		console.log(artistshtml);
+
+		artistshtml.forEach(function(art) { 
+			str = '<div id="' + 
+			art.id +
+			'" style="margin-bottom: 15px !important;"> <a href="https://starclinch.com/' +
+			art.url + 
+			'" target="_blank" style="color: #525252 !important; text-decoration: none;"> <div style="padding: 5px; ' +
+			'margin: 0px !important; display: inline;"> <img src="https://starclinchstorage.blob.core.windows.net' +
+			art.thumbnail +
+			'" style="width:65px; height:65px;"> </div><div style="width: 60%; display: inline-block;"> <h4 style="margin: 0 auto">' + 
+			art.professionalname + 
+			'</h4> <div> <div>' + 
+			art.category + 
+			'</div><div>' + 
+			art.city +
+			'</div></div></div></a> </div>';
+			console.log(str);	
+
+			artistshtmlstring += str; 
+
+		});
+
+		// for (art in artistshtml){
+		// 	console.log(art);
+		// 	str = '<div id={{ artist.id }} style="margin-bottom: 15px !important;"> <a href="https://starclinch.com/' +
+		// 	art.url + 
+		// 	'" target="_blank" style="color: #525252 !important; text-decoration: none;"> <div style="padding: 5px; ' +
+		// 	'margin: 0px !important; display: inline;"> <img src="' +
+		// 	art.thumbnail +
+		// 	'" style="width:65px; height:65px;"> </div><div style="width: 60%; display: inline-block;"> <h4 style="margin: 0 auto">' + 
+		// 	art.professionalname + 
+		// 	'</h4> <div> <div>' + 
+		// 	art.category + 
+		// 	'</div><div>' + 
+		// 	art.city +
+		// 	'</div></div></div></a> </div>';
+		// 	console.log(str);			
+		// }
+
+		console.log(artistshtmlstring);	
+
+
 		let json = {
 			fields:{
 				dealid: parseInt($scope.dealId),
@@ -304,6 +359,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				clientemail: $scope.search.clientemail,
 				dealowner: $scope.search.dealowner,
 				artistquery: artistQuery,
+				artistshtml: artistshtmlstring,
 				json: JSON.stringify($scope.search.json)
 			}
 		}
