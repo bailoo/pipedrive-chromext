@@ -115,10 +115,11 @@
 		            <input type="checkbox" value="" ng-change="saveState()" ng-model="submit.includePrice">
 		            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
 		            Include Price
-		          </label>
+		        </label>
 	      	</div>
-      		<button ng-click="submitArtists()" class="btn btn-lg btn-primary">Submit Artists</button>
+      		<button ng-click="submitArtists()" class="btn btn-lg btn-primary">Send Artists</button>
       	</div>
+      	<p class="text-center" style="width: 100%;"></p>
 	</div>
 	<div id="changeTokensBtnWrapper" ng-if="AIRTABLE_TOKEN && PIPEDRIVE_TOKEN">
 		<button ng-click="showTokensModal()" class="btn btn-sm btn-default">Change Tokens</button>
