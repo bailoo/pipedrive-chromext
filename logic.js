@@ -299,7 +299,9 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 
 		let artistshtmlstring = "";
 		let artistshtml = $scope.artists.filter(a => a.checked);
-		console.log(artistshtml);
+		//console.log(artistshtml);
+
+		//let artistemails =  $scope.artists.filter(a => a.checked).map(a => a.email);
 
 		artistshtml.forEach(function(art) { 
 			str = '<div id="' + 
@@ -316,37 +318,24 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			'</div><div>' + 
 			art.city +
 			'</div></div></div></a> </div>';
-			console.log(str);	
+			//console.log(str);	
+
+			//artistemails += art.email + ","
 
 			artistshtmlstring += str; 
 
 		});
 
-		// for (art in artistshtml){
-		// 	console.log(art);
-		// 	str = '<div id={{ artist.id }} style="margin-bottom: 15px !important;"> <a href="https://starclinch.com/' +
-		// 	art.url + 
-		// 	'" target="_blank" style="color: #525252 !important; text-decoration: none;"> <div style="padding: 5px; ' +
-		// 	'margin: 0px !important; display: inline;"> <img src="' +
-		// 	art.thumbnail +
-		// 	'" style="width:65px; height:65px;"> </div><div style="width: 60%; display: inline-block;"> <h4 style="margin: 0 auto">' + 
-		// 	art.professionalname + 
-		// 	'</h4> <div> <div>' + 
-		// 	art.category + 
-		// 	'</div><div>' + 
-		// 	art.city +
-		// 	'</div></div></div></a> </div>';
-		// 	console.log(str);			
-		// }
+		//artistemails = "[" + artistemails + "]";
 
-		console.log(artistshtmlstring);	
-
+		// console.log(artistshtmlstring);	
 
 		let json = {
 			fields:{
 				dealid: parseInt($scope.dealId),
 				includeprice: ($scope.submit.includePrice ? 1 : 0),
 				artists,
+				//artistemails,
 				category: $scope.search.category,
 				categoryname: categoryName,
 				eventname: $scope.eventName,
