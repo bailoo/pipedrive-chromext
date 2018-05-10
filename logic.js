@@ -146,7 +146,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			}
 		}
 		options.filterByFormula = filterByFormula;
-		$scope.airtable("ArtistsDev")
+		$scope.airtable("Artists")
 		.select(options)
 		.eachPage(function(records, fetchNextPage) {
 			$timeout(() => {
