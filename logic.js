@@ -1,6 +1,6 @@
 const Airtable = require('airtable');
 const app = angular.module("myApp", ["ui.bootstrap"]);
-const DEFAULE_SEARCH_PARAMS = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language",   event: 0, clientname: "", clientemail:"", dealowner: "", gathering: "", date: "", lookingfor: "", json: ""};
+const DEFAULE_SEARCH_PARAMS = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language",   event: 0, clientname: "", clientemail:"", dealowner: "", gathering: "", date: "", lookingfor: "", json: "", location: ""};
 
 app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", function($scope, $http, $uibModal, $timeout){
 	window.exposedScope = $scope;
@@ -14,6 +14,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.artistshtmlarray = [];
 	$scope.alerts = [];
 	$scope.submit = {includePrice: false}
+	$scope.location = ""
 
 	$scope.eventName = "";
 
@@ -218,6 +219,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 
 					$scope.search.price = data.value;
 					$scope.search.city = data["361085abd375a7eb3964f068295f12fe17d9f280_admin_area_level_2"];
+					$scope.location = data["361085abd375a7eb3964f068295f12fe17d9f280"];
 					$scope.search.name = data["ef1b3ca0c720a4c39ddf75adbc38ab4f8248597b"];
 					$scope.search.gathering = data["1f9805fdb8715d773f1fc9457545b49c5b05d058"];
 					$scope.search.date = data["19c2c12d8fea52c4709cd4ce256b7852bc2b0259"];
@@ -228,6 +230,8 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					$scope.search.json = data;
 					$scope.loadArtists();
 					$scope.pagination.loading = false;
+
+					console.log("location = " + $scope.location);
 				}).catch(e => {
 					$scope.pagination.loading = false;
 					$scope.alerts.push({danger: true, msg: `Unable to get deal "${$scope.dealId}" details. Make sure the PipeDrive token is valid.`});
@@ -328,7 +332,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 
 		//artistemails = "[" + artistemails + "]";
 
-		// console.log(artistshtmlstring);	
+		console.log($scope.location);	
 
 		let json = {
 			fields:{
@@ -340,6 +344,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				categoryname: categoryName,
 				eventname: $scope.eventName,
 				city: $scope.search.city,
+				location: $scope.location,
 				price: $scope.search.price,
 				gathering: $scope.search.gathering,
 				date: $scope.search.date,
