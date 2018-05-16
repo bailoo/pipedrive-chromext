@@ -287,6 +287,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 									}
 									$scope.dealId = dealId;
 									$scope.submit.includePrice = state.includePrice;
+									$scope.location = state.location;
 								}
 								$scope.loadArtists(state);
 							});
@@ -379,7 +380,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	}
 
 	$scope.saveState = () => {
-		let state = {artists: $scope.artists.map(a => ({id: a.id, checked: a.checked})), currentPage: $scope.pagination.currentPage, search: $scope.search, sorting: $scope.sorting, includePrice: $scope.submit.includePrice};
+		let state = {artists: $scope.artists.map(a => ({id: a.id, checked: a.checked})), currentPage: $scope.pagination.currentPage, search: $scope.search, sorting: $scope.sorting, includePrice: $scope.submit.includePrice, location: $scope.location};
 		Utils.setState(state);
 	}
 
