@@ -16,6 +16,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.submit = {includePrice: false};
 	$scope.location = "";
 	$scope.budget = 0;
+	$scope.activeDealId = 0;
 
 	$scope.eventName = "";
 
@@ -231,6 +232,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					$scope.search.clientemail = data["person_id"]["email"][0]["value"];
 					$scope.search.dealowner = data["owner_name"];
 					$scope.search.json = data;
+					$scope.activeDealId = $scope.dealId;
 					$scope.loadArtists();
 					$scope.pagination.loading = false;
 
@@ -252,6 +254,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			Utils.getDealId(dealId => {
 				$timeout(() => {
 					$scope.dealId = dealId;
+					$scope.activeDealId = dealId;
 					loadDeal();
 				});
 			});
@@ -288,6 +291,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 									$scope.dealId = dealId;
 									$scope.submit.includePrice = state.includePrice;
 									$scope.location = state.location;
+									$scope.activeDealId = state.activeDealId;
 								}
 								$scope.loadArtists(state);
 							});
@@ -380,7 +384,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	}
 
 	$scope.saveState = () => {
-		let state = {artists: $scope.artists.map(a => ({id: a.id, checked: a.checked})), currentPage: $scope.pagination.currentPage, search: $scope.search, sorting: $scope.sorting, includePrice: $scope.submit.includePrice, location: $scope.location};
+		let state = {artists: $scope.artists.map(a => ({id: a.id, checked: a.checked})), currentPage: $scope.pagination.currentPage, search: $scope.search, sorting: $scope.sorting, includePrice: $scope.submit.includePrice, location: $scope.location, activeDealId: $scope.activeDealId};
 		Utils.setState(state);
 	}
 
