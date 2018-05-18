@@ -92,7 +92,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		$scope.pagination.totalItems = 0;
 		$scope.loadMoreArtists = undefined;
 		$scope.artistsToShow = [];
-		let fields = ["id", "professionalname", "city", "email", "phone", "category", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription"];
+		let fields = ["id", "professionalname", "city", "email", "phone", "category", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription", "maxprice"];
 		if($scope.eventName){
 			fields.push($scope.eventName + "_p");
 		}
