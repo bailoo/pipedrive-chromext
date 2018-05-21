@@ -323,7 +323,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			'" target="_blank" style="color: #525252 !important; text-decoration: none;"> <div style="padding: 5px; ' +
 			'margin: 0px !important; display: inline;"> <img src="https://starclinchstorage.blob.core.windows.net' +
 			art.thumbnail +
-			'" style="width:65px; height:65px;"> </div><div style="width: 60%; display: inline-block;"> <h4 style="margin: 0 auto">' + 
+			'" style="width:65px; height:65px; border-radius: 50%;"> </div><div style="width: 60%; display: inline-block;"> <h4 style="margin: 0 auto">' + 
 			art.professionalname + 
 			'</h4> <div> <div>' + 
 			art.category + 
