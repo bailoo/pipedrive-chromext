@@ -9,7 +9,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.pagination = {totalItems: 0, itemsPerPage: 10, currentPage: 1};
 	$scope.search = {...DEFAULE_SEARCH_PARAMS};
 	$scope.sorting = {price: "asc", updated: "asc", order: ["price", "updated"]};
-	$scope.event = [{value: 15, name:"campus"}, {value: 16, name:"charity"},{value: 18, name:"corporate"}, {value: 19, name:"exhibition"}, {value: 20, name:"fashionshow"}, {value: 21, name:"inauguration"}, {value: 22, name:"kidsparty"}, {value: 23, name:"photovideoshoot"}, {value: 24, name:"privateparty"}, {value: 25, name:"professionalhiring"}, {value: 26, name:"religious"}, {value: 27, name:"restaurant"}, {value: 28, name:"wedding"}, {value: 17, name:"concertfestival"}];
+	$scope.event = [{value: 0, name:"ANY EVENT"}, {value: 15, name:"campus"}, {value: 16, name:"charity"},{value: 18, name:"corporate"}, {value: 19, name:"exhibition"}, {value: 20, name:"fashionshow"}, {value: 21, name:"inauguration"}, {value: 22, name:"kidsparty"}, {value: 23, name:"photovideoshoot"}, {value: 24, name:"privateparty"}, {value: 25, name:"professionalhiring"}, {value: 26, name:"religious"}, {value: 27, name:"restaurant"}, {value: 28, name:"wedding"}, {value: 17, name:"concertfestival"}];
 	$scope.artists = [];
 	$scope.alerts = [];
 	$scope.submit = {includePrice: false};
@@ -95,9 +95,9 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		$scope.loadMoreArtists = undefined;
 		$scope.artistsToShow = [];
 		let fields = ["id", "professionalname", "city", "email", "phone", "category", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription", "maxprice"];
-		$scope.event.forEach(event => {
-			fields.push(`${event.name}_p`);
-		});
+		if($scope.eventName){
+			fields.push(`${$scope.eventName}_p`);
+		}
 		let options = {
 						view: "TestView",
 		    			fields,
@@ -204,6 +204,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.loadDeal = dealId => {
 		let loadDeal = () => {
 			if($scope.dealId){
+				$scope.clearPitchList();
 				$scope.pagination.loading = true;
 				$scope.alerts = $scope.alerts.filter(a => a.type !== "DEAL");
 				$http.get(`https://api.pipedrive.com/v1/deals/${$scope.dealId}?api_token=${$scope.PIPEDRIVE_TOKEN}`).then(r => r.data).then(r => r.data).then(data => {
@@ -287,7 +288,9 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 									$scope.activeDealId = state.activeDealId;
 									$scope.pitchList = state.pitchList || [];
 								}
-								$scope.loadArtists(state);
+								if($scope.activeDealId == dealId){
+									$scope.loadArtists(state);
+								}
 							});
 						});
 					});
@@ -299,10 +302,10 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	});
 
 	$scope.submitArtists = () => {
-		let artists = $scope.artists.filter(a => a.checked).map(a => a.id);
+		let artists = $scope.pitchList.filter(a => a.checked).map(a => a.id);
 		let categoryName = ($scope.categories.find(c => c.value == $scope.search.category) || {}).name
 		let artistQuery = `OR(${artists.map(id => ("RECORD_ID()='" + id + "'")).join()})`;
-		let artistshtmlstring = $scope.artists.filter(a => a.checked).reduce((a, c) => {
+		let artistshtmlstring = $scope.pitchList.filter(a => a.checked).reduce((a, c) => {
 									a += `<div id="${c.id}" style="margin-bottom: 15px !important;"> 
 													<a href="https://starclinch.com/${c.url}" target="_blank" style="color: #525252 !important; text-decoration: none;">
 												    	<div style="padding: 5px; margin: 0px !important; display: inline;"> 
@@ -355,7 +358,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		}).then(response => {
 			console.info("Artists were posted", response);
 			$scope.alerts.push({success: true, msg: "Artists were pitched"});
-			$scope.pitchList = [];
+			$scope.clearPitchList();
 			$scope.closePitchList && $scope.closePitchList();
 			$scope.pagination.loading = false;
 		}).catch(e => {
