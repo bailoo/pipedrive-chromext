@@ -11,7 +11,6 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.sorting = {price: "asc", updated: "asc", order: ["price", "updated"]};
 	$scope.event = [{value: 15, name:"campus"}, {value: 16, name:"charity"},{value: 18, name:"corporate"}, {value: 19, name:"exhibition"}, {value: 20, name:"fashionshow"}, {value: 21, name:"inauguration"}, {value: 22, name:"kidsparty"}, {value: 23, name:"photovideoshoot"}, {value: 24, name:"privateparty"}, {value: 25, name:"professionalhiring"}, {value: 26, name:"religious"}, {value: 27, name:"restaurant"}, {value: 28, name:"wedding"}, {value: 17, name:"concertfestival"}];
 	$scope.artists = [];
-	$scope.artistshtmlarray = [];
 	$scope.alerts = [];
 	$scope.submit = {includePrice: false};
 	$scope.location = "";
@@ -26,6 +25,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.genders = ["Any Gender", "Male", "Female", "Others"];
 	$scope.subscriptions = ["Any Subscription", "Get Discovered", "Instant Gigs", "Power Up"];
 	$scope.languages = ["Any Language", "English","Hindi","Punjabi","Gujarati","Bengali","Malayalam","Marathi","Tamil","Telugu","Kannada","Assamese","Rajasthani"];
+	$scope.pitchList = [];
 
 	$scope.categoryChange = function(){
 		if($scope.subcategoriesMap[$scope.search.category]){
@@ -85,6 +85,8 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	}
 
 	$scope.loadArtists = state => {
+		$scope.search.categoryName = ($scope.categories.find(c => c.value == $scope.search.category) || {}).name
+		
 		$scope.pagination.loading = true;
 		$scope.alerts = $scope.alerts.filter(a => a.type !== "ARTISTS");
 		$scope.artists = [];
@@ -93,10 +95,9 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		$scope.loadMoreArtists = undefined;
 		$scope.artistsToShow = [];
 		let fields = ["id", "professionalname", "city", "email", "phone", "category", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription", "maxprice"];
-		if($scope.eventName){
-			fields.push($scope.eventName + "_p");
-		}
-
+		$scope.event.forEach(event => {
+			fields.push(`${event.name}_p`);
+		});
 		let options = {
 						view: "TestView",
 		    			fields,
@@ -159,17 +160,9 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					if(state && state.artists){
 						artist.checked = (state.artists.find(a => a.id === artist.id) || {}).checked;
 					}
+					artist.checked = ($scope.pitchList.find(a => a.id === artist.id) || {}).checked;
 					return artist;
 				}));
-
-				$scope.artistshtmlarray.push(...records.map(v => {
-					let artistt = {...v.fields, rowId: v.fields, id: v.id};
-					if(state && state.artists){
-						artistt.checked = (state.artists.find(a => a.id === artistt.id) || {}).checked;
-					}
-					return artistt;
-				}));
-				console.log($scope.artistshtmlarray);
 
 				let start = 0;
 				let end = $scope.itemsPerPage;
@@ -235,7 +228,8 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					$scope.activeDealId = $scope.dealId;
 					$scope.loadArtists();
 					$scope.pagination.loading = false;
-
+					$scope.search.dealTitle = data.title;
+					console.log("@loadDeal", $scope.search);
 					
 				}).catch(e => {
 					$scope.pagination.loading = false;
@@ -254,7 +248,6 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			Utils.getDealId(dealId => {
 				$timeout(() => {
 					$scope.dealId = dealId;
-					$scope.activeDealId = dealId;
 					loadDeal();
 				});
 			});
@@ -292,6 +285,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 									$scope.submit.includePrice = state.includePrice;
 									$scope.location = state.location;
 									$scope.activeDealId = state.activeDealId;
+									$scope.pitchList = state.pitchList || [];
 								}
 								$scope.loadArtists(state);
 							});
@@ -308,46 +302,29 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		let artists = $scope.artists.filter(a => a.checked).map(a => a.id);
 		let categoryName = ($scope.categories.find(c => c.value == $scope.search.category) || {}).name
 		let artistQuery = `OR(${artists.map(id => ("RECORD_ID()='" + id + "'")).join()})`;
-
-		let artistshtmlstring = "";
-		let artistshtml = $scope.artists.filter(a => a.checked);
-		//console.log(artistshtml);
-
-		//let artistemails =  $scope.artists.filter(a => a.checked).map(a => a.email);
-
-		artistshtml.forEach(function(art) { 
-			str = '<div id="' + 
-			art.id +
-			'" style="margin-bottom: 15px !important;"> <a href="https://starclinch.com/' +
-			art.url + 
-			'" target="_blank" style="color: #525252 !important; text-decoration: none;"> <div style="padding: 5px; ' +
-			'margin: 0px !important; display: inline;"> <img src="https://starclinchstorage.blob.core.windows.net' +
-			art.thumbnail +
-			'" style="width:65px; height:65px; border-radius: 50%;"> </div><div style="width: 60%; display: inline-block;"> <h4 style="margin: 0 auto">' + 
-			art.professionalname + 
-			'</h4> <div> <div>' + 
-			art.category + 
-			'</div><div>' + 
-			art.city +
-			'</div></div></div></a> </div>';
-			//console.log(str);	
-
-			//artistemails += art.email + ","
-
-			artistshtmlstring += str; 
-
-		});
-
-		//artistemails = "[" + artistemails + "]";
-
-		console.log($scope.location);	
+		let artistshtmlstring = $scope.artists.filter(a => a.checked).reduce((a, c) => {
+									a += `<div id="${c.id}" style="margin-bottom: 15px !important;"> 
+													<a href="https://starclinch.com/${c.url}" target="_blank" style="color: #525252 !important; text-decoration: none;">
+												    	<div style="padding: 5px; margin: 0px !important; display: inline;"> 
+												    		<img src="https://starclinchstorage.blob.core.windows.net${c.thumbnail}" style="width:65px; height:65px; border-radius: 50%;" /> 
+												    	</div>
+											    		<div style="width: 60%; display: inline-block;"> 
+											    			<h4 style="margin: 0 auto">${c.professionalname}</h4> 
+											    			<div>
+											    				<div>${c.category}</div>
+											    				<div>${c.city}</div>
+											    			</div>
+											    		</div>
+											    	</a> 
+											    </div>`;
+									return a;
+								}, "");
 
 		let json = {
 			fields:{
-				dealid: parseInt($scope.dealId),
+				dealid: parseInt($scope.activeDealId),
 				includeprice: ($scope.submit.includePrice ? 1 : 0),
 				artists,
-				//artistemails,
 				category: $scope.search.category,
 				categoryname: categoryName,
 				eventname: $scope.eventName,
@@ -366,6 +343,8 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			}
 		}
 
+		$scope.pagination.loading = true;
+		
 		$http({
 			method: "POST",
 			url: "https://api.airtable.com/v0/appAOUimmyFijLDUZ/ArtistSuggest",
@@ -376,16 +355,50 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		}).then(response => {
 			console.info("Artists were posted", response);
 			$scope.alerts.push({success: true, msg: "Artists were pitched"});
+			$scope.pitchList = [];
+			$scope.pagination.loading = false;
 		}).catch(e => {
 			console.warn("Unable to posts checked artists", e);
 			$scope.alerts.push({danger: true, msg: "Unable to pitch selected artists"});
+			$scope.pagination.loading = false;
 		});
-		
 	}
 
 	$scope.saveState = () => {
-		let state = {artists: $scope.artists.map(a => ({id: a.id, checked: a.checked})), currentPage: $scope.pagination.currentPage, search: $scope.search, sorting: $scope.sorting, includePrice: $scope.submit.includePrice, location: $scope.location, activeDealId: $scope.activeDealId};
+		let state = {artists: $scope.artists.map(a => ({id: a.id, checked: a.checked})), currentPage: $scope.pagination.currentPage, search: $scope.search, sorting: $scope.sorting, includePrice: $scope.submit.includePrice, location: $scope.location, activeDealId: $scope.activeDealId, pitchList: $scope.pitchList};
 		Utils.setState(state);
+	}
+
+	$scope.openPitchList = () => {
+		console.log("@openPitchList");
+		let instance = $uibModal.open({
+	      templateUrl: "pitchList.html",
+	      backdrop: "static",
+	      controller: () => {},
+	      size: "md",
+	      scope: $scope
+		});
+		$scope.closePitchList = () => {
+			instance.close();
+		}
+	}
+
+	$scope.artistStateChange = (artist) => {
+		if(artist.checked){
+			$scope.pitchList.push(artist);
+		}else{
+			($scope.artists.find(a => a.id === artist.id) || {}).checked = false;
+			$scope.pitchList = $scope.pitchList.filter(a => a.id !== artist.id)
+		}
+		$scope.saveState();
+	}
+
+	$scope.clearPitchList = () => {
+		$scope.pitchList.forEach(a => {
+			($scope.artists.find(ar => ar.id === a.id) || {}).checked = false;
+		});
+		$scope.pitchList = [];
+		$scope.saveState();
 	}
 
 }]);

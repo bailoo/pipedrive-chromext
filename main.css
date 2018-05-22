@@ -32,13 +32,11 @@ html, body {
 }
 
 #searchButtonWrapper{
-	width: 95px; 
-	vertical-align: text-bottom;
 }
 
-.searchBarComponent input, .searchBarComponent select{
-	max-width: calc(100% / 4.1);
-	min-width: calc(100% / 4.1);
+.searchBarComponent input, .searchBarComponent select, .searchBarComponent button{
+	max-width: calc(100% / 5.2);
+	min-width: calc(100% / 5.2);
 }
 
 .icon{
@@ -164,4 +162,35 @@ html, body {
 
 .pitchAndGigCount{
 	font-size: 12;
+}
+
+#loadingAnimation{
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0,0,0,0.5);
+	z-index: 999999999;
+}
+
+#loadingAnimation .glyphicon-refresh-animate {
+	font-size: 50px; 
+	top: calc(50% - 25px);
+    left: calc(50% - 25px);
+    color: white;
+    -webkit-animation: spin .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+
+#pitchListModalBody .artistPrice, #pitchListModalBody .updated {
+	width: 70px;
+    font-size: 100%;
 }

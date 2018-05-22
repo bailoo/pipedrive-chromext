@@ -18,17 +18,23 @@
 </head>
 <body ng-controller="mainController">
 	<div uib-alert ng-repeat="alert in alerts" class="text-center" ng-class="{'alert-danger': alert.danger, 'alert-success': alert.success}" close="closeAlert($index)">{{alert.msg}}</div>
+	<div id="loadingAnimation" ng-if="pagination.loading">
+		<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> 
+	</div>
 	<div id="mainWrapper" ng-if="AIRTABLE_TOKEN && PIPEDRIVE_TOKEN">
 		<div ng-if="dealId" id="processDealBtnWrapper">
 			<h4 style="display: inline-block; margin-left: 180px;">Active Deal: {{activeDealId}}</h4>
 			<button ng-click="loadDeal(dealId)" class="btn btn-sm btn-danger" style="display: inline; float: right; margin-right: 2px; margin-top: 2px;">Process Deal {{dealId}}</button>
 		</div>
 		<div id="searchBar" class="text-center">
-			<div style="display: inline-block;width: calc(100% - 100px);">
+			<div>
 				<div class="searchBarComponent">
 					<input type="text" class="form-control" ng-model="search.name" placeholder="Name" title="Name">
 					<select ng-model="search.category" ng-change="categoryChange()">
 		      			<option ng-repeat="option in categories" ng-value="option.value">{{option.name}}</option>
+		      		</select>
+		      		<select ng-model="search.event" ng-change="setEventName()">
+		      			<option ng-repeat="option in event" ng-value="option.value">{{option.name}}</option>
 		      		</select>
 		      		<input type="number" class="form-control" ng-model="search.price" placeholder="Price" title="Price" />
 		      		<input type="text" class="form-control" ng-model="search.city" placeholder="City" title="City"/>
@@ -47,10 +53,8 @@
 		      		<select ng-model="search.language">
 		      			<option ng-repeat="language in languages" ng-value="language">{{language}}</option>
 		      		</select>
+		      		<button ng-click="loadArtists(); saveState();" class="btn btn-info"><i class="icon glyphicon glyphicon-search"></i>Search</button>
 	      		</div>
-      		</div>
-      		<div class="searchBarComponent" id="searchButtonWrapper">
-      			<button ng-click="loadArtists(); saveState();" class="btn btn-info"><i class="icon glyphicon glyphicon-search"></i>Search</button>
       		</div>
       	</div>
 
@@ -91,7 +95,7 @@
       			 --><div class="artistCheckbox">
       			 		<div class="checkbox bigCheckbox">
 				          <label>
-				            <input type="checkbox" value="" ng-change="saveState()" ng-model="artist.checked">
+				            <input type="checkbox" value="" ng-change="artistStateChange(artist)" ng-model="artist.checked">
 				            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
 				          </label>
 				        </div>
@@ -111,14 +115,7 @@
       	</div>
 
       	<div class="submitBtnWrapper text-center">
-      		<div id="includePriceCheckbox" class="checkbox bigCheckbox">
-	      		<label>
-		            <input type="checkbox" value="" ng-change="saveState()" ng-model="submit.includePrice">
-		            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
-		            Include Price
-		        </label>
-	      	</div>
-      		<button ng-click="submitArtists()" class="btn btn-lg btn-primary">Pitch Artists</button>
+      		<button ng-click="openPitchList()" class="btn btn-lg btn-primary">Pitch List ({{pitchList.length}})</button>
       	</div>
       	<p class="text-center" style="width: 100%;"></p>
 	</div>
@@ -149,5 +146,59 @@
             <button class="btn btn-primary" type="button" ng-click="local.save()">Save</button>
         </div>
     </script>
+
+    <script type="text/ng-template" id="pitchList.html">
+    	<div class="modal-header">
+    		<button type="button" class="close" ng-click="closePitchList()" aria-hidden="true">&times;</button>
+            <h3 class="modal-title" id="modal-title">Pitch List ({{pitchList.length}})</h3>
+        </div>
+        <div class="modal-body" id="pitchListModalBody">
+        	<h4 class="text-center" ng-if="pitchList.length">Pitching {{search.categoryName}} for {{search.clientname}}'s {{search.dealTitle}} on {{search.date}} </h4>
+        	<div class="text-right" ng-if="pitchList.length">
+        		<button class="btn btn-sm btn-danger" ng-click="clearPitchList()">&times; ALL</button>
+        	</div>
+        	<h4 class="text-center" ng-if="!pitchList.length">No artists were selected</h4>
+	    	<div id="artistsWrapper">
+	      		<div class="artistElm" ng-repeat="artist in pitchList track by artist.id">
+	      			<div class="artistDetailsWrapper">
+	      			<div class="artistImage">
+	      				<i ng-if="!artist.thumbnail" class="glyphicon glyphicon-star"></i>
+	      				<img ng-if="artist.thumbnail" src="https://starclinchstorage.blob.core.windows.net{{artist.thumbnail}}">
+	      			</div>
+	      			<div class="artistInfo">
+		      			<h4><a href="https://starclinch.com/{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
+		      			<div class="artistInfoSpansWrapper">
+		      				<div ng-if="subscriptionColors[artist.subscription]" class="subscriptionIndicator" ng-attr-title="{{artist.subscription}} Subscription" ng-style="{backgroundColor: subscriptionColors[artist.subscription]}"></div>
+		      				<span class="pitchAndGigCount">(<span title="Pitch Count">{{artist.pitchcount}}</span>, <span title="Gig Count">{{artist.gigcount}}</span>)</span>
+		      			</div>
+		      			<div class="contactInfo">
+		      				<div class="email">{{artist.email}}</div>
+		      				<div class="phoneNumber">{{artist.phone}}</div>
+		      				<div class="city">{{artist.city}}</div>
+		      			</div>
+	      			</div><!-- 
+	      			 --><div class="updated">{{artist.updated}}</div><!-- 
+	      			 --><div class="artistPrice">Rs {{artist[eventName + "_p"]}}<br/>(Rs {{artist.maxprice}})</div><!-- 
+	      			 --><div class="artistCheckbox">
+	      			 		<button class="btn btn-sm btn-danger" ng-click="artist.checked = false; artistStateChange(artist)">&times;</button>
+	      			 </div>
+	      			</div>
+	      		</div>
+	      	</div>
+	      	<div class="submitBtnWrapper text-center"  ng-if="pitchList.length">
+	      		<div id="includePriceCheckbox" class="checkbox bigCheckbox">
+		      		<label>
+			            <input type="checkbox" value="" ng-change="saveState()" ng-model="submit.includePrice">
+			            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+			            Include Price
+			        </label>
+		      	</div>
+	      		<button ng-click="submitArtists()" class="btn btn-lg btn-primary">Pitch Artists</button>
+      		</div>
+	     </div>
+    </script>
+
+
+
 </body>
 </html>

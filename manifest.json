@@ -10,7 +10,8 @@
 	[
 		"storage",
 		"tabs",
-		"declarativeContent"
+		"declarativeContent",
+		"unlimitedStorage"
 	],
 	"page_action": {
       "default_popup": "index.html"

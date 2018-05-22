@@ -60,16 +60,16 @@ class Utils{
 	}
 
 	static setValue(key, value){
-		if(window.chrome && window.chrome.storage && window.chrome.storage.sync && window.chrome.storage.sync.set){
-			window.chrome.storage.sync.set({[key]: value});
+		if(window.chrome && window.chrome.storage && window.chrome.storage.local && window.chrome.storage.local.set){
+			window.chrome.storage.local.set({[key]: value});
 		}else if(window.localStorage){
 			window.localStorage[key] = typeof(value) === "object" ? JSON.stringify(value) : value;
 		}
 	}
 
 	static getValue(key, callback){
-		if(window.chrome && window.chrome.storage && window.chrome.storage.sync && window.chrome.storage.sync.get){
-			window.chrome.storage.sync.get(key, values => {
+		if(window.chrome && window.chrome.storage && window.chrome.storage.local && window.chrome.storage.local.get){
+			window.chrome.storage.local.get(key, values => {
 				callback(values && values[key]);
 			});
 		}else if(window.localStorage){
