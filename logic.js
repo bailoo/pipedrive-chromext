@@ -209,6 +209,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				$scope.alerts = $scope.alerts.filter(a => a.type !== "DEAL");
 				$http.get(`https://api.pipedrive.com/v1/deals/${$scope.dealId}?api_token=${$scope.PIPEDRIVE_TOKEN}`).then(r => r.data).then(r => r.data).then(data => {
 					$scope.search.category = parseInt(data["61a501536a4065f5a970be5c6de536cf7ad14078"]);
+					$scope.categoryChange();
 					$scope.search.event = parseInt(data["755ded0be98b3ee5157cf117566f0443bd93cc63"]);
 
 					$scope.originalDealEvent = $scope.search.event;
