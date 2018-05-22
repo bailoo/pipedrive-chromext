@@ -356,6 +356,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			console.info("Artists were posted", response);
 			$scope.alerts.push({success: true, msg: "Artists were pitched"});
 			$scope.pitchList = [];
+			$scope.closePitchList && $scope.closePitchList();
 			$scope.pagination.loading = false;
 		}).catch(e => {
 			console.warn("Unable to posts checked artists", e);
