@@ -211,6 +211,8 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					$scope.search.category = parseInt(data["61a501536a4065f5a970be5c6de536cf7ad14078"]);
 					$scope.search.event = parseInt(data["755ded0be98b3ee5157cf117566f0443bd93cc63"]);
 
+					$scope.originalDealEvent = $scope.search.event;
+
 					$scope.setEventName();
 
 					$scope.search.price = data.value;
@@ -288,9 +290,9 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 									$scope.activeDealId = state.activeDealId;
 									$scope.pitchList = state.pitchList || [];
 								}
-								if($scope.activeDealId == dealId){
-									$scope.loadArtists(state);
-								}
+								//if($scope.activeDealId == dealId){
+									//$scope.loadArtists(state);
+								//}
 							});
 						});
 					});
@@ -322,6 +324,10 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 											    </div>`;
 									return a;
 								}, "");
+		let eventName = ($scope.event.find(e => e.value == $scope.originalDealEvent) || {}).name;
+		if(eventName){
+			eventName = eventName.toLowerCase().replace(/[^a-z]/g, "");
+		}
 
 		let json = {
 			fields:{
@@ -330,7 +336,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				artists,
 				category: $scope.search.category,
 				categoryname: categoryName,
-				eventname: $scope.eventName,
+				eventname: eventName,
 				city: $scope.search.city,
 				location: $scope.location,
 				budget: $scope.search.budget,
