@@ -9,7 +9,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.pagination = {totalItems: 0, itemsPerPage: 10, currentPage: 1};
 	$scope.search = {...DEFAULE_SEARCH_PARAMS};
 	$scope.sorting = {price: "asc", updated: "asc", order: ["price", "updated"]};
-	$scope.event = [{value: 0, name:"ANY EVENT"}, {value: 15, name:"campus"}, {value: 16, name:"charity"},{value: 18, name:"corporate"}, {value: 19, name:"exhibition"}, {value: 20, name:"fashionshow"}, {value: 21, name:"inauguration"}, {value: 22, name:"kidsparty"}, {value: 23, name:"photovideoshoot"}, {value: 24, name:"privateparty"}, {value: 25, name:"professionalhiring"}, {value: 26, name:"religious"}, {value: 27, name:"restaurant"}, {value: 28, name:"wedding"}, {value: 17, name:"concertfestival"}];
+	$scope.event = [{value: 15, name:"campus"}, {value: 16, name:"charity"},{value: 18, name:"corporate"}, {value: 19, name:"exhibition"}, {value: 20, name:"fashionshow"}, {value: 21, name:"inauguration"}, {value: 22, name:"kidsparty"}, {value: 23, name:"photovideoshoot"}, {value: 24, name:"privateparty"}, {value: 25, name:"professionalhiring"}, {value: 26, name:"religious"}, {value: 27, name:"restaurant"}, {value: 28, name:"wedding"}, {value: 17, name:"concertfestival"}];
 	$scope.artists = [];
 	$scope.alerts = [];
 	$scope.submit = {includePrice: false};
