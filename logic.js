@@ -29,10 +29,12 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 
 	$scope.manifestVersion = 0;
 
-	Utils.getManifestVersion(manifestVersion => {
-		$scope.manifestVersion = manifestVersion;
-	});
-
+	$scope.getManifestVersionScope = function(){
+		Utils.getManifestVersion(manifestVersion => {
+			$scope.manifestVersion = manifestVersion;
+		});
+	}
+	
 	$scope.categoryChange = function(){
 		if($scope.subcategoriesMap[$scope.search.category]){
 			$scope.subcategories = $scope.subcategoriesMap[$scope.search.category]

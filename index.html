@@ -16,7 +16,7 @@
 	<script type="text/javascript" src="Utils.js"></script>
 	<script type="text/javascript" src="logic.js"></script>
 </head>
-<body ng-controller="mainController">
+<body ng-controller="mainController" ng-init="getManifestVersionScope()">
 	<div uib-alert ng-repeat="alert in alerts" class="text-center" ng-class="{'alert-danger': alert.danger, 'alert-success': alert.success}" close="closeAlert($index)">{{alert.msg}}</div>
 	<div id="loadingAnimation" ng-if="pagination.loading">
 		<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> 
