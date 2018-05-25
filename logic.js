@@ -107,7 +107,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		let options = {
 						view: "TestView",
 		    			fields,
-		    			sort: $scope.sorting.order.map(k => ({field: (k === "price" && $scope.eventName ? `${$scope.eventName}_p` : k), direction: $scope.sorting[k]}))
+		    			sort: $scope.sorting.order.map(k => ({field: (k === "price" && $scope.eventName ? `${$scope.eventName}_p` : (k === "price" ? "maxprice" : k)), direction: $scope.sorting[k]}))
 		    		}
 
 		let categoryObj = $scope.categories.find(c => c.value != 0 && c.value == $scope.search.category);

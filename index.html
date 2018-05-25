@@ -22,9 +22,9 @@
 		<span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> 
 	</div>
 	<div id="mainWrapper" ng-if="AIRTABLE_TOKEN && PIPEDRIVE_TOKEN">
-		<div ng-if="dealId" id="processDealBtnWrapper">
-			<h4 style="display: inline-block; margin-left: 180px;">Active Deal: {{activeDealId}}</h4>
-			<button ng-click="loadDeal(dealId)" class="btn btn-sm btn-danger" style="display: inline; float: right; margin-right: 2px; margin-top: 2px;">Process Deal {{dealId}}</button>
+		<div ng-if="dealId || activeDealId" id="processDealBtnWrapper">
+			<h4 ng-if="activeDealId" style="display: inline-block; margin-left: 180px;">Active Deal: {{activeDealId}}</h4>
+			<button ng-if="dealId" ng-click="loadDeal(dealId)" class="btn btn-sm btn-danger" style="display: inline; float: right; margin-right: 2px; margin-top: 2px;">Process Deal {{dealId}}</button>
 		</div>
 		<div id="searchBar" class="text-center">
 			<div>
