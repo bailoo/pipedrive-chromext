@@ -96,4 +96,10 @@ class Utils{
 			callback();
 		}
 	}
+
+	static getManifestVersion(callback) {
+		var manifestVersion = chrome.runtime.getManifest().version;
+		console.log(manifestVersion);
+		callback(manifestVersion);
+	}
 }
