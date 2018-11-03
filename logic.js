@@ -318,7 +318,6 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		let artistQuery = `OR(${artists.map(id => ("RECORD_ID()='" + id + "'")).join()})`;
 		let artistshtmlstring = $scope.pitchList.filter(a => a.checked).reduce((a, c) => {
 									a += `<div id="${c.id}" style="margin-bottom: 15px !important;"> 
-													<a href="https://starclinch.com/${c.url}?utm_source=pitch&utm_medium=email&utm_campaign=client" target="_blank" style="color: #525252 !important; text-decoration: none;">
 												    	<div style="padding: 5px; margin: 0px !important; display: inline;"> 
 												    		<img src="https://cdn.starclinch.com${c.thumbnail}" style="width:65px; height:65px; border-radius: 50%;" /> 
 												    	</div>
@@ -329,7 +328,6 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 											    				<div>${c.city}</div>
 											    			</div>
 											    		</div>
-											    	</a> 
 											    </div>`;
 									return a;
 								}, "");
