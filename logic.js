@@ -320,7 +320,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 									a += `<div id="${c.id}" style="margin-bottom: 15px !important;"> 
 													<a href="https://starclinch.com/${c.url}?utm_source=pitch&utm_medium=email&utm_campaign=client" target="_blank" style="color: #525252 !important; text-decoration: none;">
 												    	<div style="padding: 5px; margin: 0px !important; display: inline;"> 
-												    		<img src="https://starclinchstorage.blob.core.windows.net${c.thumbnail}" style="width:65px; height:65px; border-radius: 50%;" /> 
+												    		<img src="https://cdn.starclinch.com${c.thumbnail}" style="width:65px; height:65px; border-radius: 50%;" /> 
 												    	</div>
 											    		<div style="width: 60%; display: inline-block;"> 
 											    			<h4 style="margin: 0 auto">${c.professionalname}</h4> 
