@@ -121,7 +121,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		}
 
 		if($scope.search.name){
-			conditions.push(`FIND("${$scope.search.name.toLowerCase()}", LOWER(professionalname))`)
+			conditions.push(`FIND("${$scope.search.name.toLowerCase().trim()}", LOWER(professionalname))`)
 		}
 
 		if(categoryObj){
