@@ -1,6 +1,6 @@
 const Airtable = require('airtable');
 const app = angular.module("myApp", ["ui.bootstrap"]);
-const DEFAULE_SEARCH_PARAMS = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language",   event: 0, clientname: "", clientemail:"", dealowner: "", gathering: "", date: "", lookingfor: "", json: ""};
+const DEFAULE_SEARCH_PARAMS = {name: "", category: 0, city: "", price: "",gender: "Any Gender", subcategory: "Any Subcategory", subscription: "Any Subscription", language: "Any Language",   event: 0, clientname: "", clientemail:"", dealowner: "", gathering: "", date: "", lookingfor: "", json: "", state: ""};
 
 app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", function($scope, $http, $uibModal, $timeout){
 	window.exposedScope = $scope;
@@ -26,6 +26,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.subscriptions = ["Any Subscription", "Get Discovered", "Instant Gigs", "Power Up"];
 	$scope.languages = ["Any Language", "English","Hindi","Punjabi","Gujarati","Bengali","Malayalam","Marathi","Tamil","Telugu","Kannada","Assamese","Rajasthani"];
 	$scope.pitchList = [];
+	$scope.states = ["Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chandigarh", "Chennai", "Chhattisgarh", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttarakhand", "Uttar Pradesh", "West Bengal", "Daman and Diu"];
 
 	$scope.manifestVersion = 0;
 
@@ -130,6 +131,11 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		if($scope.search.city && $scope.search.city.trim()){
 			conditions.push(`FIND("${$scope.search.city.toLowerCase()}", LOWER(city))`);
 		}
+
+		if($scope.search.state && $scope.search.state.trim()){
+			conditions.push(`FIND("${$scope.search.state.toLowerCase()}", LOWER(state))`);
+		}
+
 		if($scope.search.price === 0 || ($scope.search.price && !isNaN($scope.search.price))){
 			conditions.push(`${$scope.eventName}_p<=${$scope.search.price}`);
 		}
@@ -227,6 +233,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 					$scope.search.price = data.value;
 					$scope.search.budget = parseInt(data.value);
 					$scope.search.city = data["361085abd375a7eb3964f068295f12fe17d9f280_admin_area_level_2"];
+					$scope.search.state = data["361085abd375a7eb3964f068295f12fe17d9f280_admin_area_level_1"];
 					$scope.location = data["361085abd375a7eb3964f068295f12fe17d9f280"];
 					console.log("location = " + $scope.location);
 					$scope.search.name = data["ef1b3ca0c720a4c39ddf75adbc38ab4f8248597b"];
@@ -345,6 +352,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				categoryname: categoryName,
 				eventname: eventName,
 				city: $scope.search.city,
+				state: $scope.search.state,
 				location: $scope.location,
 				budget: $scope.search.budget,
 				gathering: $scope.search.gathering,
