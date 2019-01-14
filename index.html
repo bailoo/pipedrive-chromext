@@ -15,6 +15,75 @@
 	<script type="text/javascript" src="libs/js/airtable.browser.js"></script>
 	<script type="text/javascript" src="Utils.js"></script>
 	<script type="text/javascript" src="logic.js"></script>
+	<script type="text/ng-template" id="tokensModal.html">
+      <div class="modal-header">
+          <h3 class="modal-title" id="modal-title">Set Tokens</h3>
+      </div>
+      <div class="modal-body" id="modal-body">
+          <div class="input-group" ng-class="{'has-error': local.pipedriveTokenHasError}">
+		  <span class="input-group-addon" id="addon1">Pipedrive Token</span>
+		  <input type="password" class="form-control" ng-focus="local.pipedriveTokenHasError = false" ng-change="local.setPipedriveToken()" ng-model="local.pipedriveToken" aria-describedby="addon1">
+		</div>
+		<br />
+		<div class="input-group" ng-class="{'has-error': local.airtableTokenHasError}">
+		  <span class="input-group-addon" id="addon2">Airtable Token</span>
+		  <input type="password" class="form-control" ng-focus="local.airtableTokenHasError = false" ng-change="local.setAirtableToken()" ng-model="local.airtableToken" aria-describedby="addon2">
+		</div>
+      </div>
+      <div class="modal-footer">
+          <button class="btn btn-primary" type="button" ng-click="local.save()">Save</button>
+      </div>
+  </script>
+  <script type="text/ng-template" id="pitchList.html">
+  	<div class="modal-header">
+  		<button type="button" class="close" ng-click="closePitchList()" aria-hidden="true">&times;</button>
+          <h3 class="modal-title" id="modal-title">Pitch List ({{pitchList.length}})</h3>
+      </div>
+      <div class="modal-body" id="pitchListModalBody">
+      	<h5 class="text-center" ng-if="pitchList.length">Pitching {{search.categoryName}} for {{search.dealTitle}} on {{search.date}} </h5>
+      	<div class="text-right" ng-if="pitchList.length">
+      		<button class="btn btn-sm btn-danger" ng-click="clearPitchList()">&times; ALL</button>
+      	</div>
+      	<h4 class="text-center" ng-if="!pitchList.length">No artists were selected</h4>
+    	<div id="artistsWrapper">
+      		<div class="artistElm" ng-repeat="artist in pitchList track by artist.id">
+      			<div class="artistDetailsWrapper">
+      			<div class="artistImage">
+      				<i ng-if="!artist.thumbnail" class="glyphicon glyphicon-star"></i>
+      				<img ng-if="artist.thumbnail" src="https://starclinchstorage.blob.core.windows.net{{artist.thumbnail}}" style="border-radius: 50%;">
+      			</div>
+      			<div class="artistInfo">
+	      			<h4><a href="https://starclinch.com/{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
+	      			<div class="artistInfoSpansWrapper">
+	      				<div ng-if="subscriptionColors[artist.subscription]" class="subscriptionIndicator" ng-attr-title="{{artist.subscription}} Subscription" ng-style="{backgroundColor: subscriptionColors[artist.subscription]}"></div>
+	      				<span class="pitchAndGigCount">(<span title="Pitch Count">{{artist.pitchcount}}</span>, <span title="Gig Count">{{artist.gigcount}}</span>)</span>
+	      			</div>
+	      			<div class="contactInfo">
+	      				<div class="email">{{artist.email}}</div>
+	      				<div class="phoneNumber">{{artist.phone}}</div>
+	      				<div class="city">{{artist.city}}</div>
+	      			</div>
+      			</div><!-- 
+      			 --><div class="updated">{{artist.updated}}</div><!-- 
+      			 --><div class="artistPrice">Rs {{artist[eventName + "_p"]}}<br/>(Rs {{artist.maxprice}})</div><!-- 
+      			 --><div class="artistCheckbox">
+      			 		<button class="btn btn-sm btn-danger" ng-click="artist.checked = false; artistStateChange(artist)">&times;</button>
+      			 </div>
+      			</div>
+      		</div>
+      	</div>
+      	<div class="submitBtnWrapper text-center"  ng-if="pitchList.length">
+      		<div id="includePriceCheckbox" class="checkbox bigCheckbox">
+	      		<label>
+		            <input type="checkbox" value="" ng-change="saveState()" ng-model="submit.includePrice">
+		            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
+		            Include Price
+		        </label>
+	      	</div>
+      		<button ng-click="submitArtists()" class="btn btn-lg btn-primary">Pitch Artists</button>
+    		</div>
+     </div>
+  </script>
 </head>
 <body ng-controller="mainController" ng-init="getManifestVersionScope()">
 	<div uib-alert ng-repeat="alert in alerts" class="text-center" ng-class="{'alert-danger': alert.danger, 'alert-success': alert.success}" close="closeAlert($index)">{{alert.msg}}</div>
@@ -131,78 +200,5 @@
 	<div id="tokensNotSet" ng-if="!(AIRTABLE_TOKEN && PIPEDRIVE_TOKEN)" class="text-center">
 		Tokens are not set, <a href ng-click="showTokensModal()">Set Tokens</a>
 	</div>
-	<script type="text/ng-template" id="tokensModal.html">
-        <div class="modal-header">
-            <h3 class="modal-title" id="modal-title">Set Tokens</h3>
-        </div>
-        <div class="modal-body" id="modal-body">
-            <div class="input-group" ng-class="{'has-error': local.pipedriveTokenHasError}">
-			  <span class="input-group-addon" id="addon1">Pipedrive Token</span>
-			  <input type="password" class="form-control" ng-focus="local.pipedriveTokenHasError = false" ng-change="local.setPipedriveToken()" ng-model="local.pipedriveToken" aria-describedby="addon1">
-			</div>
-			<br />
-			<div class="input-group" ng-class="{'has-error': local.airtableTokenHasError}">
-			  <span class="input-group-addon" id="addon2">Airtable Token</span>
-			  <input type="password" class="form-control" ng-focus="local.airtableTokenHasError = false" ng-change="local.setAirtableToken()" ng-model="local.airtableToken" aria-describedby="addon2">
-			</div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" type="button" ng-click="local.save()">Save</button>
-        </div>
-    </script>
-
-    <script type="text/ng-template" id="pitchList.html">
-    	<div class="modal-header">
-    		<button type="button" class="close" ng-click="closePitchList()" aria-hidden="true">&times;</button>
-            <h3 class="modal-title" id="modal-title">Pitch List ({{pitchList.length}})</h3>
-        </div>
-        <div class="modal-body" id="pitchListModalBody">
-        	<h5 class="text-center" ng-if="pitchList.length">Pitching {{search.categoryName}} for {{search.dealTitle}} on {{search.date}} </h5>
-        	<div class="text-right" ng-if="pitchList.length">
-        		<button class="btn btn-sm btn-danger" ng-click="clearPitchList()">&times; ALL</button>
-        	</div>
-        	<h4 class="text-center" ng-if="!pitchList.length">No artists were selected</h4>
-	    	<div id="artistsWrapper">
-	      		<div class="artistElm" ng-repeat="artist in pitchList track by artist.id">
-	      			<div class="artistDetailsWrapper">
-	      			<div class="artistImage">
-	      				<i ng-if="!artist.thumbnail" class="glyphicon glyphicon-star"></i>
-	      				<img ng-if="artist.thumbnail" src="https://starclinchstorage.blob.core.windows.net{{artist.thumbnail}}" style="border-radius: 50%;">
-	      			</div>
-	      			<div class="artistInfo">
-		      			<h4><a href="https://starclinch.com/{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
-		      			<div class="artistInfoSpansWrapper">
-		      				<div ng-if="subscriptionColors[artist.subscription]" class="subscriptionIndicator" ng-attr-title="{{artist.subscription}} Subscription" ng-style="{backgroundColor: subscriptionColors[artist.subscription]}"></div>
-		      				<span class="pitchAndGigCount">(<span title="Pitch Count">{{artist.pitchcount}}</span>, <span title="Gig Count">{{artist.gigcount}}</span>)</span>
-		      			</div>
-		      			<div class="contactInfo">
-		      				<div class="email">{{artist.email}}</div>
-		      				<div class="phoneNumber">{{artist.phone}}</div>
-		      				<div class="city">{{artist.city}}</div>
-		      			</div>
-	      			</div><!-- 
-	      			 --><div class="updated">{{artist.updated}}</div><!-- 
-	      			 --><div class="artistPrice">Rs {{artist[eventName + "_p"]}}<br/>(Rs {{artist.maxprice}})</div><!-- 
-	      			 --><div class="artistCheckbox">
-	      			 		<button class="btn btn-sm btn-danger" ng-click="artist.checked = false; artistStateChange(artist)">&times;</button>
-	      			 </div>
-	      			</div>
-	      		</div>
-	      	</div>
-	      	<div class="submitBtnWrapper text-center"  ng-if="pitchList.length">
-	      		<div id="includePriceCheckbox" class="checkbox bigCheckbox">
-		      		<label>
-			            <input type="checkbox" value="" ng-change="saveState()" ng-model="submit.includePrice">
-			            <span class="cr"><i class="cr-icon glyphicon glyphicon-ok"></i></span>
-			            Include Price
-			        </label>
-		      	</div>
-	      		<button ng-click="submitArtists()" class="btn btn-lg btn-primary">Pitch Artists</button>
-      		</div>
-	     </div>
-    </script>
-
-
-
 </body>
 </html>
