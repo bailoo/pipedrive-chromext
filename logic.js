@@ -103,7 +103,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		$scope.pagination.totalItems = 0;
 		$scope.loadMoreArtists = undefined;
 		$scope.artistsToShow = [];
-		let fields = ["id", "professionalname", "city", "email", "phone", "category", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription", "maxprice"];
+		let fields = ["id", "professionalname", "city", "email", "phone", "category", "subcategory", "url", "thumbnail", "updated", "pitchcount", "gigcount", "subscription", "maxprice", "profilewp"];
 		if($scope.eventName){
 			fields.push(`${$scope.eventName}_p`);
 		}
@@ -326,7 +326,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		let artistshtmlstring = $scope.pitchList.filter(a => a.checked).reduce((a, c) => {
 									a += `<div id="${c.id}" style="margin-bottom: 15px !important;"> 
 												    	<div style="padding: 5px; margin: 0px !important; display: inline;"> 
-												    		<img src="https://cdn.starclinch.com${c.thumbnail}" style="width:65px; height:65px; border-radius: 50%;" /> 
+												    		<img src="${c.profilewp}" style="width:65px; height:65px; border-radius: 50%;" /> 
 												    	</div>
 											    		<div style="width: 60%; display: inline-block;"> 
 											    			<h4 style="margin: 0 auto">${c.professionalname}</h4> 
