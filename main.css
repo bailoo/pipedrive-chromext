@@ -75,6 +75,12 @@ html, body {
 	cursor: pointer;
 }
 
+#contact-button{
+	font-size: 12px;
+	height: 20px;
+	padding-top: 0;
+}
+
 #artistsWrapper{
 	padding: 10px;
 }

@@ -53,7 +53,7 @@
       				<img ng-if="artist.profilewp" src="{{artist.profilewp}}" style="border-radius: 50%;">
       			</div>
       			<div class="artistInfo">
-	      			<h4><a href="https://starclinch.com/{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
+	      			<h4><a href="{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
 	      			<div class="artistInfoSpansWrapper">
 	      				<div ng-if="subscriptionColors[artist.subscription]" class="subscriptionIndicator" ng-attr-title="{{artist.subscription}} Subscription" ng-style="{backgroundColor: subscriptionColors[artist.subscription]}"></div>
 	      				<span class="pitchAndGigCount">(<span title="Pitch Count">{{artist.pitchcount}}</span>, <span title="Gig Count">{{artist.gigcount}}</span>)</span>
@@ -106,7 +106,7 @@
 		      			<option ng-repeat="option in event" ng-value="option.value">{{option.name}}</option>
 		      		</select>
 		      		<input type="number" class="form-control" ng-model="search.price" placeholder="Price" title="Price" />
-		      		<input type="text" class="form-control" ng-model="search.city" placeholder="City" title="City"/>
+		      		<input type="text" class="form-control" ng-model="search.city" placeholder="City" title="City" uib-typeahead="city for city in cities | filter:$viewValue | limitTo:8" typeahead-editable="false"/>
 	      		</div>
 	      		<br />
 	      		<div class="searchBarComponent">
@@ -151,7 +151,8 @@
       				<img ng-if="artist.profilewp" src="{{artist.profilewp}}" style="border-radius: 50%;">
       			</div>
       			<div class="artistInfo">
-	      			<h4><a href="https://starclinch.com/{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
+	      			<h4><a href="{{artist.url}}" target="_blank">{{artist.professionalname}}</a></h4>
+	      			<button ng-click="test(artist, $event)" class="btn btn-primary" id="contact-button" ng-hide={{hidevalue}}>Contact</button>
 	      			<div class="artistInfoSpansWrapper">
 	      				<div ng-if="subscriptionColors[artist.subscription]" class="subscriptionIndicator" ng-attr-title="{{artist.subscription}} Subscription" ng-style="{backgroundColor: subscriptionColors[artist.subscription]}"></div>
 	      				<span class="pitchAndGigCount">(<span title="Pitch Count">{{artist.pitchcount}}</span>, <span title="Gig Count">{{artist.gigcount}}</span>)</span>
@@ -163,7 +164,7 @@
 	      			</div>
       			</div><!-- 
       			 --><div class="updated">{{artist.updated}}</div><!-- 
-      			 --><div class="artistPrice">Rs {{artist[eventName + "_p"]}}<br/>(Rs {{artist.maxprice}})</div><!-- 
+      			 --><div class="artistPrice">Rs {{artist.minprice}}<br/>Rs {{artist.maxprice}}</div><!-- 
       			 --><div class="artistCheckbox">
       			 		<div class="checkbox bigCheckbox">
 				          <label>
