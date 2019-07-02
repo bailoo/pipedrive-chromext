@@ -365,8 +365,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 
 	$scope.submitArtists = () => {
 		let artist = $scope.pitchList.filter(a => a.checked).map(a => a.id)
-		let pitchcount = $scope.pitchList.filter(a => a.checked).map(a => parseInt(a.pitchcount)+1)
-		console.log(pitchcount)
+		let pitchcounts = $scope.pitchList.filter(a => a.checked).map(a => parseInt(a.pitchcount)+1)
 		let categoryName = ($scope.categories.find(c => c.value == $scope.search.category) || {}).name
 		// let artistQuery = `OR(${artists.map(id => ("RECORD_ID()='" + id + "'")).join()})`;
 		let artistshtmlstring = $scope.pitchList.filter(a => a.checked).reduce((a, c) => {
@@ -397,7 +396,6 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				artists: artist.join(),
 				artisturls: artisturl,
 				artistnames: artistprofessional,
-				category: $scope.search.category,
 				categoryname: categoryName,
 				eventname: eventName,
 				city: $scope.search.city,
@@ -411,6 +409,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				clientemail: $scope.search.clientemail,
 				dealowner: $scope.search.dealowner,
 				// artistquery: artistQuery,
+				pitchcount: pitchcounts.join(),
 				artistshtml: artistshtmlstring,
 				json: JSON.stringify($scope.search.json)
 			}
@@ -418,7 +417,16 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 
 		$scope.pagination.loading = true;
 		console.log(json)
-
+		// artist.forEach(function (e, ind) {
+		// 	$http({
+		// 		method: "POST",
+		// 		url: "https://starclinch.com/wp-json/acf/v3/posts/"+e+"?fields[pitchcount]="+pitchcount[ind],
+		// 		headers: {	
+		// 			'Authorization':'Basic aGFyc2hpdHN0YXI6bmVvbjA0JEhBUzE=',
+		// 			'content-type': 'application/json'
+		// 		}
+		// 	})
+		// })
 		$http({
 			method: "POST",
 			url: "https://api.airtable.com/v0/appAOUimmyFijLDUZ/ArtistPitch",
