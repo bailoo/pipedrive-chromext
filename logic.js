@@ -371,14 +371,11 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		let artistshtmlstring = $scope.pitchList.filter(a => a.checked).reduce((a, c) => {
 									a += `<div id="${c.id}" style="margin-bottom: 15px !important;"> 
 												    	<div style="padding: 5px; margin: 0px !important; display: inline;"> 
-												    		<a href="${c.url}"><img src="${c.profilewp}" style="width:65px; height:65px; border-radius: 50%;" /> </a>
+												    		<a href="${c.url}"><img src="${c.profilewp}" style="width:65px; height:65px; border-radius: 50%;"></a>
 												    	</div>
 											    		<div style="width: 60%; display: inline-block;"> 
 											    			<a style="color:#525252; text-decoration: none; " href="${c.url}"><h4 style="margin: 0 auto">${c.professionalname}</h4></a>
-											    			<div>
-											    				<div>${c.category}</div>
-											    				<div>${c.city}</div>
-											    			</div>
+											    			<div><div>${c.city}</div></div>
 											    		</div>
 											    </div>`;
 									return a;
