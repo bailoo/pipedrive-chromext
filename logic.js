@@ -12,7 +12,7 @@ state_id={'Haryana': 18510, 'Punjab': 18524, 'Goa': 18508, 'Chhattisgarh': 18506
 app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", function($scope, $http, $uibModal, $timeout){
 	window.exposedScope = $scope;
 	$scope.subscriptionColors = {"Power Up": "#ffc20e", "Get Discovered": "#37c2a8", "Instant Gigs": "#f57171", "No Subscription": "#eff0f1", "": "#eff0f1"};
-	$scope.categories = [{value: 1, name:"ANCHOR/EMCEE"},{value: 2, name:"CELEBRITY"}, {value: 3, name:"COMEDIAN"}, {value:4, name:"DANCER/TROUPE"}, {value:5, name:"DJ"}, {value:6, name:"INSTRUMENTALIST"}, {value:7, name:"LIVE BAND"}, {value:8, name:"MAGICIAN"}, {value:9, name:"MAKE-UP ARTIST"}, {value:10, name:"MODEL"}, {value:11, name:"PHOTO/VIDEOGRAPHER"}, {value:12, name:"SINGER"}, {value:13, name:"SPEAKER"}, {value:14, name:"VARIETY ARTIST"}];
+	$scope.categories = [{name:"Any Category"}, {value: 1, name:"ANCHOR/EMCEE"},{value: 2, name:"CELEBRITY"}, {value: 3, name:"COMEDIAN"}, {value:4, name:"DANCER/TROUPE"}, {value:5, name:"DJ"}, {value:6, name:"INSTRUMENTALIST"}, {value:7, name:"LIVE BAND"}, {value:8, name:"MAGICIAN"}, {value:9, name:"MAKE-UP ARTIST"}, {value:10, name:"MODEL"}, {value:11, name:"PHOTO/VIDEOGRAPHER"}, {value:12, name:"SINGER"}, {value:13, name:"SPEAKER"}, {value:14, name:"VARIETY ARTIST"}];
 	$scope.pagination = {totalItems: 0, itemsPerPage: 10, currentPage: 1};
 	$scope.search = {...DEFAULE_SEARCH_PARAMS};
 	$scope.sorting = {price: "asc", updated: "asc", order: ["price", "updated"]};
@@ -133,8 +133,8 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 			filterByFormula+="&search="+$scope.search.name.trim()
 		}
 
-		if(categoryObj){
-			conditions.push(`FIND("${categoryObj.name.toLowerCase()}", LOWER(category))`);
+		if($scope.search.category && $scope.search.category !== "Any Category"){
+			filterByFormula+="&product_cat="+category_id[($scope.search.subcategory=="Any Subcategory"?categoryObj.name:$scope.search.subcategory).toLowerCase()]
 		}
 		if($scope.search.city && $scope.search.city.trim()){
 			filterByFormula+="&pa_city="+city_id_reverse[$scope.search.city]
@@ -163,10 +163,10 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 		if($scope.search.language && $scope.search.language !== "Any Language"){
 			filterByFormula+="&pa_languages="+language_id[$scope.search.language]
 		}
-		// "Authorization": `Basic ${window.btoa('ck_f894e409f58f0f1bb0a869009a4ff3b2ad35f79c:cs_812fe84d8d3c94a20242727fd276f2233cffc677')}`,
+		console.log(filterByFormula)
 		$http({
 			method: "GET",
-			url: "https://starclinch.com/wp-json/wp/v2/product?per_page=100&product_cat="+category_id[($scope.search.subcategory=="Any Subcategory"?categoryObj.name:$scope.search.subcategory).toLowerCase()]+filterByFormula,
+			url: "https://starclinch.com/wp-json/wp/v2/product?per_page=100"+filterByFormula,
 			headers: {
 				'content-type': 'application/json'
 			}
