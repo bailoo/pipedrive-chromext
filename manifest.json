@@ -1,7 +1,7 @@
 {
 	"name": "PipeDrive ChromeEXT",
 	"description": "PipeDrive ChromeEXT",
-	"version": "0.4",
+	"version": "0.4.1",
 	"background": {
     	"scripts": ["background.js"],
     	"persistent": false
