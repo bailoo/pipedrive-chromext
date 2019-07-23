@@ -16,7 +16,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 	$scope.pagination = {totalItems: 0, itemsPerPage: 10, currentPage: 1};
 	$scope.search = {...DEFAULE_SEARCH_PARAMS};
 	$scope.sorting = {price: "asc", updated: "asc", order: ["price", "updated"]};
-	$scope.event = [{value:'', name:'Any Event'}, {value: 230, name:"campus"}, {value: 231, name:"charity"}, {value: 232, name:"concertfestival"}, {value: 233, name:"corporate"}, {value: 13811, name:"exhibition"}, {value: 13859, name:"fashionshow"}, {value: 234, name:"inauguration"}, {value: 235, name:"kidsparty"}, {value: 245, name:"photovideoshoot"}, {value: 246, name:"professionalhiring"}, {value: 13801, name:"privateparty"}, {value: 236, name:"religious"}, {value: 237, name:"restaurant"}, {value: 13802, name:"wedding"}];
+	$scope.event = [{value:'', name:'Any Event'}, {value: 230, name:"Campus", pip: 15}, {value: 231, name:"charity", pip: 16}, {value: 232, name:"concertfestival", pip: 17}, {value: 233, name:"corporate", pip: 18}, {value: 13811, name:"exhibition", pip: 19}, {value: 13859, name:"fashionshow", pip: 20}, {value: 234, name:"inauguration", pip: 21}, {value: 235, name:"kidsparty", pip: 22}, {value: 245, name:"photovideoshoot", pip: 23}, {value: 246, name:"professionalhiring", pip: 25}, {value: 13801, name:"privateparty", pip: 24}, {value: 236, name:"religious", pip: 26}, {value: 237, name:"restaurant", pip: 27}, {value: 13802, name:"wedding", pip: 28}];
 	$scope.artists = [];
 	$scope.alerts = [];
 	$scope.submit = {includePrice: false};
@@ -252,6 +252,7 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 
 	$scope.setEventName = () => {
 		$scope.eventName = ($scope.event.find(e => e.value == $scope.search.event) || {}).name;
+		console.log($scope.eventName)
 		if($scope.eventName){
 			$scope.eventName = $scope.eventName.toLowerCase().replace(/[^a-z]/g, "");
 		}
@@ -267,8 +268,9 @@ app.controller("mainController", ["$scope", "$http", "$uibModal", "$timeout", fu
 				$http.get(`https://api.pipedrive.com/v1/deals/${$scope.dealId}?api_token=${$scope.PIPEDRIVE_TOKEN}`).then(r => r.data).then(r => r.data).then(data => {
 					$scope.search.category = parseInt(data["61a501536a4065f5a970be5c6de536cf7ad14078"]);
 					$scope.categoryChange();
-					$scope.search.event = parseInt(data["755ded0be98b3ee5157cf117566f0443bd93cc63"]);
-
+					$scope.search.event = $scope.event.find(e => e.pip == data["755ded0be98b3ee5157cf117566f0443bd93cc63"]).value
+					console.log(parseInt(data["755ded0be98b3ee5157cf117566f0443bd93cc63"]))
+					console.log(($scope.event.find(e => e.pip == data["755ded0be98b3ee5157cf117566f0443bd93cc63"]) || {}).value)
 					$scope.originalDealEvent = $scope.search.event;
 
 					$scope.setEventName();
